@@ -1,4 +1,6 @@
 /* RAND_MAX assumed to be 32767 */
+static unsigned long next = 1;
+
 int myrand(void)
 {
 	next = next * 1103515245 + 12345;
