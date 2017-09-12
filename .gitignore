@@ -38,7 +38,7 @@
 
 # codeblocks project files
 
-*.cpb
+*.cbp
 *.layout
 *.depend
 
