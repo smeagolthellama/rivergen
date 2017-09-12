@@ -12,7 +12,7 @@
 ///ha nem hasznalunk grafikat, mi legyae a folyo. Valoszinu nem hasznaljuk
 #define RIVER '#'
 
-///milyen nagy legyen a "kep"
+///milyen nagy legyen a "kep". valoszinu nem lesz hasznalva.
 #define SIZE_Y 100
 #define SIZE_X 100
 
