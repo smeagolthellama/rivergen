@@ -1,12 +1,22 @@
+/**
+ * A vizreszecske, ami tomegesen alkotja a folyot.
+ */
+
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+///Ha nem grafikat hasznalunk, mi legyen a partvonal ami meg nem volt hordva a folyo altal. Valoszinu nem hasznaljuk.
 #define SHORE '"'
+///Ha nem hasznalunk grafikat, mi legyen a folyo artere. Valoszinu nem hasznaljuk
 #define BED   '`'
+///ha nem hasznalunk grafikat, mi legyae a folyo. Valoszinu nem hasznaljuk
 #define RIVER '#'
+
+///milyen nagy legyen a "kep"
 #define SIZE_Y 100
 #define SIZE_X 100
 
+///kell a terkep.
 #include "water_map.h"
 
 class particle
