@@ -1,1 +1,1 @@
-initial landscape= (.1/x)*(y/4)**2
+initial landscape(modositatlan domborzat)= (.1/x)*(y/4)**2
