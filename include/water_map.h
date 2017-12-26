@@ -13,6 +13,11 @@
 
 using std::array;
 
+struct map_cell{
+	int flags; //!< &1=has water, &2=is carrying stuff, &4=
+	float height;
+};
+
 class water_map
 {
 	public:
@@ -29,11 +34,15 @@ class water_map
 			return m_size_y;
 		};
 		///milyen eros/kemeny a part.
-		array<array<int, WATER_MAP_MAX_SIZE>, WATER_MAP_MAX_SIZE> m_hardness_map; //!< Member variable "m_hardness_map"
+		array<array<map_cell, WATER_MAP_MAX_SIZE>, WATER_MAP_MAX_SIZE> m_map; //!< Member variable "m_hardness_map" describes
+
+		void graph(); //!< function to draw map on screen
 	protected:
 		///meretek
-		unsigned int m_size_x; //!< Member variable "m_size_x"
-		unsigned int m_size_y; //!< Member variable "m_size_y"
+		unsigned int m_size_x; //!< Member variable "m_size_x", x size of map
+		unsigned int m_size_y; //!< Member variable "m_size_y", y size of map
+		float m_max_height; //!< maximum height of map
+		float m_min_height; //!< minimum height of map
 };
 
 #endif // WATER_MAP_H

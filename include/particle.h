@@ -16,9 +16,11 @@
 #define SIZE_Y 100
 #define SIZE_X 100
 
-///kell a terkep.
+//kell a terkep.
 #include "water_map.h"
 
+
+///Particle of water.
 class particle
 {
 	public:
@@ -28,7 +30,7 @@ class particle
 		 * \return The current value of m_position_x
 		 */
 		unsigned int Getposition_x() { return m_position_x; }
-		/** Set m_position_x
+		/*/** Set m_position_x
 		 * \param val New value to set
 		 */
 		//void Setposition_x(unsigned int val) { m_position_x = val; }
@@ -36,7 +38,7 @@ class particle
 		 * \return The current value of m_position_y
 		 */
 		unsigned int Getposition_y() { return m_position_y; }
-		/** Set m_position_y
+		/*/** Set m_position_y
 		 * \param val New value to set
 		 */
 		//void Setposition_y(unsigned int val) { m_position_y = val; }
@@ -44,7 +46,7 @@ class particle
 		 * \return The current value of m_speed_y
 		 */
 		 int Getspeed_y() { return m_speed_y; }
-		/** Set m_speed_y
+		/*/** Set m_speed_y
 		 * \param val New value to set
 		 */
 		//void Setspeed_y( int val) { m_speed_y = val; }
@@ -52,7 +54,7 @@ class particle
 		 * \return The current value of m_speed_x
 		 */
 		 int Getspeed_x() { return m_speed_x; }
-		/** Set m_speed_x
+		/*/** Set m_speed_x
 		 * \param val New value to set
 		 */
 		//void Setspeed_x( int val) { m_speed_x = val; }
