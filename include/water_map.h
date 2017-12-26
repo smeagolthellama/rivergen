@@ -6,25 +6,50 @@
 #define WATER_MAP_H
 
 //gondoltam, hasznaljuk a c++ altal adott tomb konyvtarat. nem biztos hogy jo otlet, de na.
+//I thought to use the STL array, might not be good idea
 #include <array>
 
+///maximum size for map
 ///mekkora memoriat foglaljon le a program a terkep szamara?
-#define WATER_MAP_MAX_SIZE 1024
+#define WATER_MAP_MAX_SIZE 500
 
 using std::array;
 
-struct map_cell{
-	int flags; //!< &1=has water, &2=is carrying stuff, &4=
-	float height;
+enum flag_vals{
+	HAS_WATER=1,
+	IS_WATER_SOURCE=2,
+	BORING=4,
+	PERMANENTLY_BORING=8/*,
+	CARRYING
+	*/
 };
+
+struct map_cell{
+	int flags; //!< &1=has water, &2=is water source, &4=boring, &8 carrying
+	float land_height;
+	float curr_vx,curr_vy;
+	float water_height;
+	float delta_vx,delta_vy;
+	float delta_water_height;
+/** TODO (mark#1#12/26/17): add erosion */
+	//float delta_height
+};
+
+
+
+#define KM *1000
+#define M
+#define CM *0.01
+#define MM *0.001
+
 
 class water_map
 {
 	public:
-		/** Default constructor */
 		water_map(int size_x, int size_y);
-		/** Default destructor */
-		~water_map();
+		water_map(int size_x, int size_y,float max_height);
+		//** Default destructor */
+		//~water_map();
 		unsigned int Get_size_x()
 		{
 			return m_size_x;
@@ -33,10 +58,18 @@ class water_map
 		{
 			return m_size_y;
 		};
-		///milyen eros/kemeny a part.
-		array<array<map_cell, WATER_MAP_MAX_SIZE>, WATER_MAP_MAX_SIZE> m_map; //!< Member variable "m_hardness_map" describes
+		float Get_max_height(){
+			return m_max_height;
+		}
+		float Get_min_height(){
+			return m_min_height;
+		}
+		///maga a terkep.
+		map_cell m_map[WATER_MAP_MAX_SIZE][WATER_MAP_MAX_SIZE]; //!< Member variable "m_hardness_map" describes map.
 
 		void graph(); //!< function to draw map on screen
+
+		void step(); //!< one iteration
 	protected:
 		///meretek
 		unsigned int m_size_x; //!< Member variable "m_size_x", x size of map
@@ -44,5 +77,7 @@ class water_map
 		float m_max_height; //!< maximum height of map
 		float m_min_height; //!< minimum height of map
 };
+
+int getMapColour(float height,water_map* w);
 
 #endif // WATER_MAP_H

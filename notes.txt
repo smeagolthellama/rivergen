@@ -1,1 +1,29 @@
-initial landscape(modositatlan domborzat)= (.1/x)*(y/4)**2
+//initial landscape(modositatlan domborzat)= (.1/x)*(y/4)**2
+initial landscape:{
+			xx=(float)i/(float)m_size_x;
+			yy=(float)j/(float)m_size_y;
+			float k=(yy-.5)/4;
+			m_map[i][j].height = (xx/4+20) / (xx+20) * (0.5+k*k);
+}
+
+
+CALCULATE (D)ELTAS BEFORE APLYING!
+
+EG for m:{
+
+    |y
+->x v
++------x------+
+|     m       |Dx
+|  +----------+--+
+y  |          |  |
+|  |          |  |
+|  |          |  |<= Dm_x = (v_x*Dt)/x * m -Dm_xy
++--+----------+--|
+  D|          |##|<= Dm_xy = (v_x*Dt)/x * (v_y*Dt)/y * m
+  y+-------------+
+       ^
+       Dm_y = (v_y*Dt)/y*m -Dm_xy
+}
+other values similar
+Dt should be calculated so that numerical instability is avoided EG: (v_x*Dt)/x,(v_y*Dt)/y do not exceed 0.5 or so.
