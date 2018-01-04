@@ -74,7 +74,7 @@ void water_map::graph()
 	static int frame = 0;
 
 	if (frame == 0) {
-		initwindow(m_size_x*2, m_size_y);
+		initwindow(m_size_x*3, m_size_y);
 	}
 
 	unsigned int i, j;
@@ -85,15 +85,18 @@ void water_map::graph()
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
 					putpixel(i,j,RED);
 					putpixel(i+m_size_x,j,RED);
+					putpixel(i+2*m_size_x,j,RED);
 				}else{
 					putpixel(i, j, getWaterColour(m_map[i][j].water_height-m_map[i][j].land_height,this));
 					putpixel(i+m_size_x, j, getWaterColour(m_map[i][j].water_height,this));
+					putpixel(i+2*m_size_x, j, BLUE);
 					//printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 
 			} else {
 				putpixel(i, j, getMapColour(m_map[i][j].land_height, this));
 				putpixel(i+m_size_x, j, getMapColour(m_map[i][j].land_height, this));
+				putpixel(i+2*m_size_x, j, BROWN);
 			}
 		}
 	}
