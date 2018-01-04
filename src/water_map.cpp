@@ -85,7 +85,7 @@ void water_map::graph()
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
 					putpixel(i,j,RED);
 				}else{
-					putpixel(i, j, getWaterColour(m_map[i][j].water_height,this));
+					putpixel(i, j, getWaterColour(m_map[i][j].water_height-m_map[i][j].land_height,this));
 					printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 
