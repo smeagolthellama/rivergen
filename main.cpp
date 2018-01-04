@@ -32,7 +32,7 @@ void react_to_signals(int signum){
 			break;
 		default:
 			cerr<<"This... should not be happening. Please tell my developer.";
-			exit(12);
+			exit(signum);
 	}
 }
 

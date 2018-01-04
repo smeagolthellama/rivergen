@@ -106,7 +106,7 @@ void water_map::graph()
 	char name[64];
 
 	sprintf(name, "save_%d.bmp", frame++);
-	writeimagefile(name, 0, 0, m_size_x*2, m_size_y);
+	writeimagefile(name, 0, 0, m_size_x*3, m_size_y);
 
 }
 

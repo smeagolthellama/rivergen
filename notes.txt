@@ -100,4 +100,7 @@ D_m = m*s/(l/4) = 1/2*ρ*g*Δh^2
 v = a*t = 2*g*Δh*t/l
 
 
+FRICTION
 
+frictional force := F <get rid of
+viscosity := 
