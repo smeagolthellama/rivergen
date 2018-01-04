@@ -205,7 +205,7 @@ double water_map::step()
 					//TODO (mark#7#30/12/17): friction
 					for (int k = 0; k < 8; k++) {
 						delta_h=0;
-						if(i+delta_is[k]>=0 && j+selta_js[k]>=0){
+						if(i+delta_is[k]>=0 && j+delta_js[k]>=0){
 								if(m_map[i+delta_is[k]][j+delta_js[k]].water_height<m_map[i][j].land_height) {
 								delta_h=m_map[i][j].water_height-m_map[i][j].land_height;
 							} else {
