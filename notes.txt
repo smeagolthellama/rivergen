@@ -125,13 +125,21 @@ Cd = k^2/(ln(h/z0)-1)^2
 
 
 coefficient of drag,turbulent flow from
+
 	ENVIRONMENTAL FLUID MECHANICS
 	BENOIT CUSHMAN-ROISIN
 	Thayer School of Engineering
 	Dartmouth College
 	Hanover, New Hampshire 03755
+
+	(https://thayer.dartmouth.edu/~d30345d/books/EFM/)
+
 		cd(x)=(k/(log(x/z0)-1))**2
 		turb(h,v)=cd(h)*v**2/h
 laminar flow and Reynolds number from engineering toolbox
 	lam(h,v)=.001*2*v/(1000*(h**2))
 	re(h,v)=10**6*v*h
+assumption:
+	laminar flow if re<2300, turbulent if re>4000
+	otherwise transitional
+	transitional region: assume linear interpolation
