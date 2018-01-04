@@ -18,6 +18,7 @@ using std::array;
 extern float cell_size_si; //!< size in meters of each cell(cells are square)
 extern float density;
 extern float gravitationalConstant;
+extern float cachedCd[10];
 
 enum flag_vals{
 	HAS_WATER=1,

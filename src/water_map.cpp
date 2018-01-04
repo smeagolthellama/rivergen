@@ -8,8 +8,10 @@ extern "C" {
 }
 
 #define OPTIMUM_FRACTION 0.2
+#define Z0 1 MM
 
 float gravitationalConstant=9.89;
+float cachedCd[10];
 
 water_map::water_map(int size_x, int size_y)
 {
@@ -24,7 +26,12 @@ water_map::water_map(int size_x, int size_y, float max_height)
 	if ((size_x > WATER_MAP_MAX_SIZE) || (size_y > WATER_MAP_MAX_SIZE)) {
 		throw CANT_MAKE_MAP;
 	}
-
+	if(cachedCd[0]==0){
+		int tmp;
+		for(int i=0;i<10;i++){
+			cachedCd[i]=(0.4*0.4)/((tmp=(log(((float)i/200.0)/Z0)-1))*tmp);
+		}
+	}
 	m_size_x = size_x;
 	m_size_y = size_y;
 	unsigned int i, j;
