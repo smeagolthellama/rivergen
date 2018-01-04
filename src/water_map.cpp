@@ -191,10 +191,10 @@ double water_map::step()
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=4;
 					}
-					if(!(flag&1)) {
+					if(!(flag&2)) {
 						m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
 					}
-					if(!(flag&2)) {
+					if(!(flag&1)) {
 						m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
 					}
 					if(!(flag&4)) {
