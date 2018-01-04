@@ -11,9 +11,13 @@
 
 ///maximum size for map
 ///mekkora memoriat foglaljon le a program a terkep szamara?
-#define WATER_MAP_MAX_SIZE 500
+#define WATER_MAP_MAX_SIZE 400
 
 using std::array;
+
+extern float cell_size_si; //!< size in meters of each cell(cells are square)
+extern float density;
+extern float gravitationalConstant;
 
 enum flag_vals{
 	HAS_WATER=1,
@@ -25,22 +29,21 @@ enum flag_vals{
 };
 
 struct map_cell{
-	int flags; //!< &1=has water, &2=is water source, &4=boring, &8 carrying
+	int flags; 
 	float land_height;
 	float curr_vx,curr_vy;
-	float water_height;
-	float delta_vx,delta_vy;
-	float delta_water_height;
+	double water_height; ///above sea level, not above land
+	double delta_vx,delta_vy;
+	double delta_water_height;
 /** TODO (mark#1#12/26/17): add erosion */
 	//float delta_height
 };
-
-
 
 #define KM *1000
 #define M
 #define CM *0.01
 #define MM *0.001
+
 
 
 class water_map
@@ -69,7 +72,7 @@ class water_map
 
 		void graph(); //!< function to draw map on screen
 
-		void step(); //!< one iteration
+		double step(); //!< one iteration
 	protected:
 		///meretek
 		unsigned int m_size_x; //!< Member variable "m_size_x", x size of map

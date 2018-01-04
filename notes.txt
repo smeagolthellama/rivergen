@@ -27,3 +27,77 @@ y  |          |  |
 }
 other values similar
 Dt should be calculated so that numerical instability is avoided EG: (v_x*Dt)/x,(v_y*Dt)/y do not exceed 0.5 or so.
+
++--+    +--+    +-----+
+|m1|  + |m2| -> |m1+m2|
++--+    +--+    +-----+
+ v1      v2    m1v1+m2v2
+               ---------
+                 m1+m2
+
+gravity
+-------
+
+problem:
+
++-+-+-+
+|0|0|0|
++-+-+-+
+|0|1|0|
++-+-+-+
+|0|0|0| where does it go?
++-+-+-+
+
+
+Possible sollution: use a gausian blur-like technique 
+pros:
+ -can be done in two 1d passes.
+cons:
+ - needs a convolution matrix.
+ - just a simple gausian blur loses velocity data
+ - -------------------------- does not seem to produce equal height in any
+   reasonable number of iterations (probably because of loss of velocity data)
+
+ sugested method:
+  use gausian blur 3x3 convolution matrix (↓) to work out dispersal of water, but
+then calculate velocities based on /*potential energy*/ pressures etc.
+  
+  matrix:
++----+---+----+
+|1/16|1/8|1/16|
++----+---+----+
+|1/8 |1/4|1/8 |
++----+---+----+
+|1/16|1/8|1/16|
++----+---+----+
+
++-+
+|#-> 
+|#|+-+
+|#||#|
+|#||#| obviously enough, but what about ^?
+|#||#|
+
+p=ρ*g*Δh
+a=(g*Δh)/x
+where x= edge cell + fraction of center cell (look at matrix)
+
++----+
+|    |
+|   #|
+|   #|
+|    |
++----+
+
+P = ρ*g*Δh
+avg(P) = 1/2P
+ρ = 1000Kg/m^3
+F = avg(P)*1/2*l*Δh = 1/4*ρ*g*Δh^2l
+m = ρ*1/2*l*Δh*1/4*l = 1/8*l^2*ρ*Δh
+a = F/m = 2*(g*Δh)/l
+s = 1/2*a/t^2 = (g*Δh)/(l*t^2)
+D_m = m*s/(l/4) = 1/2*ρ*g*Δh^2
+v = a*t = 2*g*Δh*t/l
+
+
+
