@@ -1,6 +1,5 @@
 LDFLAGS:= -lSDL_bgi -lSDL2
-CPPFLAGS:= -Wall -g
-CCFLAGS:= -std=c++11
+CPPFLAGS:= -Wall -g -std=c++11
 
 all: rivergen Makefile
 
