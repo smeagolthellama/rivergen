@@ -88,7 +88,7 @@ void water_map::graph()
 				}else{
 					putpixel(i, j, getWaterColour(m_map[i][j].water_height-m_map[i][j].land_height,this));
 					putpixel(i+m_size_x, j, getWaterColour(m_map[i][j].water_height,this));
-					printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
+					//printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 
 			} else {
@@ -253,7 +253,7 @@ double water_map::step()
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
 				if(m_map[i][j].delta_water_height>0 && (m_map[i][j].flags&HAS_WATER)==0){
-					printf("adding water to %d %d\n",i,j);
+					//printf("adding water to %d %d\n",i,j);
 					m_map[i][j].flags|=HAS_WATER;
 				}
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
