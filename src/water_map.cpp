@@ -85,7 +85,7 @@ void water_map::graph()
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
 					putpixel(i,j,RED);
 				}else{
-					putpixel(i, j, BLUE);
+					putpixel(i, j, getWaterColour(m_map[i][j].land_height,this));
 					printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 
@@ -105,6 +105,20 @@ void water_map::graph()
 }
 
 int getMapColour(float height, water_map *w)
+{
+	float t;
+
+	if (w->Get_max_height() - w->Get_min_height() == 0) {
+		throw NO_HEIGHT_DIFFERENCE;
+	}
+
+	t = ((height - w->Get_min_height()) / (w->Get_max_height()-w->Get_min_height()));
+	t *= 100;
+	//printf("%f %f\n",height,t);
+	return COLOR((t > 10) ? 128+ t * 1.25 : 255 - t * 12, 255 - t, 175 + 0.75 * t);
+}
+
+int getWaterColour(float height, water_map *w)
 {
 	float t;
 
@@ -162,17 +176,17 @@ double water_map::step()
 					delta_j = (vx > 0) ? 1 : -1;
 					delta_i = (vy > 0) ? 1 : -1;
 					//TO DO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)
-					if(m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
+					if(j+delta_j<0 || j+delta_j>m_size_y || m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
 						//can't go to x-neighbouring cell
 						//in this case, water bounces back into the original cell
 						m_map[i][j].delta_vx-= 2*delta_a*vx;
 						flag|=1;
 					}
-					if(m_map[i][j].water_height<m_map[i+delta_i][j].land_height) {
+					if(i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j].land_height) {
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=2;
 					}
-					if(m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
+					if(j+delta_j<0 || j+delta_j>m_size_y ||i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
 						m_map[i][j].delta_vx-= 2*delta_a*vx;
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=4;

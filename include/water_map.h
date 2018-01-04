@@ -82,5 +82,6 @@ class water_map
 };
 
 int getMapColour(float height,water_map* w);
+int getWaterColour(float height, water_map *w);
 
 #endif // WATER_MAP_H
