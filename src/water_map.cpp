@@ -2,6 +2,7 @@
 #include "../include/myerrors.h"
 #include <cstdio>
 #include <cmath>
+#include <iostream>
 
 extern "C" {
 #include <graphics.h>
@@ -29,12 +30,13 @@ water_map::water_map(int size_x, int size_y, float max_height)
 	if ((size_x > WATER_MAP_MAX_SIZE) || (size_y > WATER_MAP_MAX_SIZE)) {
 		throw CANT_MAKE_MAP;
 	}
-	if(cachedCd[0]==0){
+/*	if(cachedCd[0]==0){
 		int tmp;
 		for(int i=0;i<cacheSize;i++){
-			cachedCd[i]=(0.4*0.4)/((tmp=(log(((float)i/)/Z0)-1))*tmp);
+			cachedCd[i]=(0.4*0.4)/((tmp=(log(((float)i/kin_viscosity_si
+									)/Z0)-1))*tmp);
 		}
-	}
+	}*/
 	m_size_x = size_x;
 	m_size_y = size_y;
 	unsigned int i, j;
@@ -228,7 +230,7 @@ double water_map::step()
 					int RN=reynolds(u,h);
 					if(RN>2300){
 						//throw PROGRAMMING_PANIC;
-						std::cerr<<"please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: "<<RN<<endl;
+						std::cerr<<"please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: "<<RN<<std::endl;
 					}else{
 						float a=(u*kin_viscosity_si)/(h*h);
 						if(m_map[i][j].curr_vx>0){
