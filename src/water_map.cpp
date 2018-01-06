@@ -11,7 +11,9 @@ extern "C" {
 #define Z0 1 MM
 
 float gravitationalConstant=9.89;
-float cachedCd[10];
+float cachedCd[cacheSize];
+
+
 
 water_map::water_map(int size_x, int size_y)
 {
@@ -19,6 +21,7 @@ water_map::water_map(int size_x, int size_y)
 }
 
 float cell_size_si=1 CM; //!< size in meters of each cell(cells are square)
+float kin_viscosity_si=1e-6;
 
 water_map::water_map(int size_x, int size_y, float max_height)
 {
@@ -28,8 +31,8 @@ water_map::water_map(int size_x, int size_y, float max_height)
 	}
 	if(cachedCd[0]==0){
 		int tmp;
-		for(int i=0;i<10;i++){
-			cachedCd[i]=(0.4*0.4)/((tmp=(log(((float)i/200.0)/Z0)-1))*tmp);
+		for(int i=0;i<cacheSize;i++){
+			cachedCd[i]=(0.4*0.4)/((tmp=(log(((float)i/)/Z0)-1))*tmp);
 		}
 	}
 	m_size_x = size_x;
@@ -145,6 +148,10 @@ int getWaterColour(float height, water_map *w)
 	return COLOR((t > 10) ? t * 2.5 : 255 - t * 25, 255 - 2 * t, 100 + 1.55 * t);
 }
 
+inline int reynolds(int v,int h){
+	return v*h/kin_viscosity_si;
+}
+
 double water_map::step()
 {
 	static double timestep = 0.01;
@@ -216,6 +223,26 @@ double water_map::step()
 					}
 
 					//TODO (mark#7#30/12/17): friction
+					float h=m_map[i][j].water_height-m_map[i][j].land_height;
+					float u=2*sqrt(vv);
+					int RN=reynolds(u,h);
+					if(RN>2300){
+						//throw PROGRAMMING_PANIC;
+						std::cerr<<"please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: "<<RN<<endl;
+					}else{
+						float a=(u*kin_viscosity_si)/(h*h);
+						if(m_map[i][j].curr_vx>0){
+							m_map[i][j].delta_vx-=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+						}else{
+							m_map[i][j].delta_vx+=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+						}
+						if(m_map[i][j].curr_vx>0){
+							m_map[i][j].delta_vy-=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+						}else{
+							m_map[i][j].delta_vy+=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+						}
+					}
+
 					for (int k = 0; k < 8; k++) {
 						delta_h=0;
 						if((i+delta_is[k]>=0) && (j+delta_js[k])>=0 && (i+delta_is[k])<m_size_x && (j+delta_js[k])<m_size_y){

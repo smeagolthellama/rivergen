@@ -143,3 +143,6 @@ assumption:
 	laminar flow if re<2300, turbulent if re>4000
 	otherwise transitional
 	transitional region: assume linear interpolation
+
+
+viscosity of water: 10^-3

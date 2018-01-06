@@ -4,5 +4,6 @@
 #define NO_HEIGHT_DIFFERENCE 1
 #define CANT_MAKE_MAP 2
 #define TIMESTEP_PANIC 3
+#define PROGRAMMING_PANIC 4
 
 #endif

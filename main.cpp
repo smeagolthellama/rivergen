@@ -22,7 +22,7 @@ float t;
 void react_to_signals(int signum){
 	switch(signum){
 		case 10/*usr1*/:
-			cerr<<"To kill this program, use sigint. To output the current timestep to stderr (eg: if you are piping to a file), use sigusr2. To output this help, use sigusr1."<<endl;
+			cerr<<"To kill this program, use sigint(ctrl-c). To output the current timestep to stderr (eg: if you are piping to a file), use sigusr2. To output this help, use sigusr1."<<endl;
 			break;
 		case 12:
 			cerr<<t<<endl;
