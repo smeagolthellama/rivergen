@@ -18,7 +18,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-float t;
+double t;
 void react_to_signals(int signum){
 	switch(signum){
 		case 10/*usr1*/:

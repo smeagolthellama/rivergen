@@ -15,13 +15,13 @@
 
 using std::array;
 
-extern float cell_size_si; //!< size in meters of each cell(cells are square)
-extern float density;
-extern float gravitationalConstant;
+extern double cell_size_si; //!< size in meters of each cell(cells are square)
+extern double density;
+extern double gravitationalConstant;
 
 #define cacheSize 100
 
-extern float cachedCd[cacheSize];
+extern double cachedCd[cacheSize];
 
 enum flag_vals{
 	HAS_WATER=1,
@@ -34,14 +34,14 @@ enum flag_vals{
 
 struct map_cell{
 	int flags; 
-	float land_height;
-	float curr_vx,curr_vy;
+	double land_height;
+	double curr_vx,curr_vy;
 	double water_height; ///above sea level, not above land
 	double delta_vx,delta_vy;
 	double delta_water_height;
 /** TODO (mark#1#12/26/17): add erosion */
-	float delta_height;
-	float carried;
+	double delta_height;
+	double carried;
 };
 
 #define KM *1000
@@ -55,7 +55,7 @@ class water_map
 {
 	public:
 		water_map(int size_x, int size_y);
-		water_map(int size_x, int size_y,float max_height);
+		water_map(int size_x, int size_y,double max_height);
 		//** Default destructor */
 		//~water_map();
 		unsigned int Get_size_x()
@@ -66,10 +66,10 @@ class water_map
 		{
 			return m_size_y;
 		};
-		float Get_max_height(){
+		double Get_max_height(){
 			return m_max_height;
 		}
-		float Get_min_height(){
+		double Get_min_height(){
 			return m_min_height;
 		}
 		///maga a terkep.
@@ -82,11 +82,11 @@ class water_map
 		///meretek
 		unsigned int m_size_x; //!< Member variable "m_size_x", x size of map
 		unsigned int m_size_y; //!< Member variable "m_size_y", y size of map
-		float m_max_height; //!< maximum height of map
-		float m_min_height; //!< minimum height of map
+		double m_max_height; //!< maximum height of map
+		double m_min_height; //!< minimum height of map
 };
 
-int getMapColour(float height,water_map* w);
-int getWaterColour(float height, water_map *w);
+int getMapColour(double height,water_map* w);
+int getWaterColour(double height, water_map *w);
 
 #endif // WATER_MAP_H
