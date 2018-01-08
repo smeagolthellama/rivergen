@@ -206,7 +206,7 @@ double water_map::step()
 							m_map[i][j].delta_vx-= 2*delta_a*vx;
 							flag|=8;
 						}else{
-							m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height);
+							m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
 							m_map[i][j].delta_water_height-=delta_a*d_w;
 						}
 						flag|=1;
@@ -217,7 +217,7 @@ double water_map::step()
 							flag|=16;
 						}else{
 						
-							m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height);
+							m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
 							m_map[i][j].delta_water_height-=delta_b*d_w;
 						}
 						flag|=2;
@@ -228,8 +228,8 @@ double water_map::step()
 							m_map[i][j].delta_vy-= 2*delta_b*vy;
 							flag|=32;
 						}else{
-							m_map[i+delta_i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vy)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vy)/(delta_a*d_w+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height);						
-							m_map[i+delta_i][j+delta_j].delta_vy+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vx)/(delta_b*d_w+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height);
+							m_map[i+delta_i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vy)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vy)/(delta_a*d_w+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height));						
+							m_map[i+delta_i][j+delta_j].delta_vy+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vx)/(delta_b*d_w+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height));
 							m_map[i][j].delta_water_height-=delta_ab*d_w;
 						}
 						flag|=4;
@@ -305,7 +305,7 @@ double water_map::step()
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
 				if(m_map[i][j].delta_water_height>0 && (m_map[i][j].flags&HAS_WATER)==0){
-					//printf("adding water to %d %d\n",i,j);
+					printf("adding water to %d %d, %f\n",i,j,m_map[i][j].delta_water_height);
 					m_map[i][j].flags|=HAS_WATER;
 				}
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
