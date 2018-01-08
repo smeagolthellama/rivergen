@@ -182,7 +182,7 @@ double water_map::step()
 			row = m_map[i];
 
 			for (j = 0; j < m_size_y; j++) {
-				if(j==166){
+				if(j==164 && i==1){
 					printf("Habit of dying here...");	
 				}
 				if (row[j].flags & HAS_WATER) {
