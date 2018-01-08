@@ -199,7 +199,7 @@ double water_map::step()
 					delta_i = (vy > 0) ? 1 : -1;
 					//momentum transfer
 					float d_w=(m_map[i][j].water_height-m_map[i][j].land_height);
-					if(j==165 && i==0){
+					if(j==165){
 						printf("Habit of dying here...");	
 					}
 					if(j+delta_j>0 && (j+delta_j)<m_size_y) {
