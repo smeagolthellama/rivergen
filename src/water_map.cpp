@@ -199,33 +199,37 @@ double water_map::step()
 					delta_i = (vy > 0) ? 1 : -1;
 					//momentum transfer
 					float d_w=(m_map[i][j].water_height-m_map[i][j].land_height);
-					if(j==165){
+					if(j==166){
 						printf("Habit of dying here...");	
 					}
-					if(j+delta_j>0 && (j+delta_j)<m_size_y) {
-						if (m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
-						//can't go to x-neighbouring cell
-						//in this case, water bounces back into the original cell
-							m_map[i][j].delta_vx-= 2*delta_a*vx;
-							flag|=8;
-						}else{
-							m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
-							m_map[i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vx)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vx)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
-							m_map[i][j].delta_water_height-=delta_a*d_w;
+					if(delta_a!=0){
+						if(j+delta_j>0 && (j+delta_j)<m_size_y) {
+							if (m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
+							//can't go to x-neighbouring cell
+							//in this case, water bounces back into the original cell
+								m_map[i][j].delta_vx-= 2*delta_a*vx;
+								flag|=8;
+							}else{
+								m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
+								m_map[i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vx)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vx)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
+								m_map[i][j].delta_water_height-=delta_a*d_w;
+							}
+							flag|=1;
 						}
-						flag|=1;
 					}
-					if(i+delta_i>0 && i+delta_i<m_size_x ) {
-						if( m_map[i][j].water_height<m_map[i+delta_i][j].land_height){
-							m_map[i][j].delta_vy-= 2*delta_b*vy;
-							flag|=16;
-						}else{
-						
-							m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
-							m_map[i+delta_i][j].delta_vy+=(delta_i*(delta_b*d_w*vy)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vy)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
-							m_map[i][j].delta_water_height-=delta_b*d_w;
+					if(delta_b!=0){
+						if(i+delta_i>0 && i+delta_i<m_size_x ) {
+							if( m_map[i][j].water_height<m_map[i+delta_i][j].land_height){
+								m_map[i][j].delta_vy-= 2*delta_b*vy;
+								flag|=16;
+							}else{
+							
+								m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
+								m_map[i+delta_i][j].delta_vy+=(delta_i*(delta_b*d_w*vy)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vy)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
+								m_map[i][j].delta_water_height-=delta_b*d_w;
+							}
+							flag|=2;
 						}
-						flag|=2;
 					}
 					if((flag&3)==3){
 						if( m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
