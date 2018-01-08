@@ -197,38 +197,45 @@ double water_map::step()
 					delta_b = vy * timestep / cell_size_si - delta_ab;
 					delta_j = (vx > 0) ? 1 : -1;
 					delta_i = (vy > 0) ? 1 : -1;
-					//TO DO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)
-					if(j+delta_j<0 || j+delta_j>m_size_y || m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
+					//momentum transfer
+					float d_w=(m_map[i][j].water_height-m_map[i][j].land_height);
+					if(j+delta_j>0 && (j+delta_j)<m_size_y) {
+						if (m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
 						//can't go to x-neighbouring cell
 						//in this case, water bounces back into the original cell
-						if(!( j+delta_j>m_size_y)){
 							m_map[i][j].delta_vx-= 2*delta_a*vx;
+							flag|=8;
+						}else{
+							m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height);
+							m_map[i][j].delta_water_height-=delta_a*d_w;
 						}
 						flag|=1;
 					}
-					if(i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j].land_height) {
-						m_map[i][j].delta_vy-= 2*delta_b*vy;
+					if(i+delta_i>0 && i+delta_i<m_size_x ) {
+						if( m_map[i][j].water_height<m_map[i+delta_i][j].land_height){
+							m_map[i][j].delta_vy-= 2*delta_b*vy;
+							flag|=16;
+						}else{
+						
+							m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height);
+							m_map[i][j].delta_water_height-=delta_b*d_w;
+						}
 						flag|=2;
 					}
-					if(j+delta_j<0 || j+delta_j>m_size_y ||i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
-						if(!( j+delta_j>m_size_y)){
+					if((flag&3)==3){
+						if( m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
 							m_map[i][j].delta_vx-= 2*delta_a*vx;
 							m_map[i][j].delta_vy-= 2*delta_b*vy;
+							flag|=32;
+						}else{
+							m_map[i+delta_i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vy)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vy)/(delta_a*d_w+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height);						
+							m_map[i+delta_i][j+delta_j].delta_vy+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vx)/(delta_b*d_w+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height);
+							m_map[i][j].delta_water_height-=delta_ab*d_w;
 						}
 						flag|=4;
 					}
-					if(!(flag&2)) {
-						m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
-					}
-					if(!(flag&1)) {
-						m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
-					}
-					if(!(flag&4)) {
-						m_map[i+delta_i][j+delta_j].delta_vx+=(delta_i*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vx)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vx)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height));
-						m_map[i+delta_i][j+delta_j].delta_vy+=(delta_j*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vy)+(m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height)*m_map[i+delta_i][j+delta_j].curr_vy)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i+delta_i][j+delta_j].water_height-m_map[i+delta_i][j+delta_j].land_height));
-					}
-
-					//TODO (mark#7#30/12/17): friction
+					
+					//TO DO (mark#7#30/12/17): friction
 					float h=m_map[i][j].water_height-m_map[i][j].land_height;
 					float u=2*sqrt(vv);
 					int RN=reynolds(u,h);
@@ -248,7 +255,7 @@ double water_map::step()
 							m_map[i][j].delta_vy+=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
 						}
 					}
-
+					//spread out
 					for (int k = 0; k < 8; k++) {
 						delta_h=0;
 						if((i+delta_is[k]>=0) && (j+delta_js[k])>=0 && (i+delta_is[k])<m_size_x && (j+delta_js[k])<m_size_y){
@@ -270,14 +277,15 @@ double water_map::step()
 						}
 						//printf("%lg\n",volume);
 						//add volume
-						m_map[i+delta_is[k]][j+delta_js[k]].delta_water_height+=volume/(cell_size_si*cell_size_si);
+						float d_wh=volume/(cell_size_si*cell_size_si);
+						m_map[i+delta_is[k]][j+delta_js[k]].delta_water_height+=d_wh;
+						m_map[i][j].delta_water_height-=d_wh;
 						//calculate velocity
 						velocity = 2*gravitationalConstant*delta_h*timestep/cell_size_si;
 						//modify timestep
 						if((cell_tc=OPTIMUM_FRACTION*cell_size_si/velocity)<min_tc){
 							min_tc=cell_tc;
 						}
-						//TODO (mark#9#30/12/17): if numerical error, panic
 						
 						//add velocity
 						m_map[i+delta_is[k]][j+delta_js[k]].delta_vx+=delta_js[k]*(volume*velocity + (m_map[i+delta_is[k]][j+delta_js[k]].water_height-m_map[i+delta_is[k]][j+delta_js[k]].land_height)*cell_size_si*cell_size_si*m_map[i+delta_is[k]][j+delta_js[k]].curr_vx);
@@ -286,6 +294,7 @@ double water_map::step()
 				}
 			}
 		}
+		//TODO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)
 		//aply deltas
 		for(i=0;i<m_size_x;i++){
 			for(j=0;j<m_size_y;j++){
