@@ -50,7 +50,7 @@ int main()
 		t=w.step();
 		if(i%100==0){
 			w.graph();
-			cout<<t<<endl;
+			cout<<"timestep: "<<t<<endl;
 		}
 	}
 	getch();
