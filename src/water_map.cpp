@@ -199,6 +199,9 @@ double water_map::step()
 					delta_i = (vy > 0) ? 1 : -1;
 					//momentum transfer
 					float d_w=(m_map[i][j].water_height-m_map[i][j].land_height);
+					if(j==165 && i==0){
+						printf("Habit of dying here...");	
+					}
 					if(j+delta_j>0 && (j+delta_j)<m_size_y) {
 						if (m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
 						//can't go to x-neighbouring cell
