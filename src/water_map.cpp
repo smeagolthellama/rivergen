@@ -76,7 +76,7 @@ water_map::water_map(int size_x, int size_y, float max_height)
 	}
 
 	m_map[0][j].flags |= IS_WATER_SOURCE | HAS_WATER;
-	m_map[0][j].water_height = m_map[0][j].land_height + 1 CM;
+	m_map[0][j].water_height = m_map[0][j].land_height + 1 MM;
 	printf("%f %f %u\n", m_max_height, m_min_height,j);
 }
 
@@ -301,7 +301,7 @@ double water_map::step()
 				}
 				if(m_map[i][j].flags&IS_WATER_SOURCE){
 					m_map[i][j].flags|=HAS_WATER;
-					m_map[i][j].water_height = m_map[i][j].land_height + 1 CM;
+					m_map[i][j].water_height = m_map[i][j].land_height + 1 MM;
 				}
 			}
 		}
