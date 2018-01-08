@@ -234,11 +234,7 @@ double water_map::step()
 						}
 						flag|=4;
 					}
-					if(std::isnan(m_map[i][j].delta_water_height)){
-						printf("nan found: d_a: %f; d_b: %f; d_ab: %f; d_w:%f; cellsize:%f;timestep:%f \n",delta_a,delta_b,delta_ab,d_w,cell_size_si,timestep);
-						throw PROGRAMMING_PANIC;
-					}
-					//TO DO (mark#7#30/12/17): friction
+										//TO DO (mark#7#30/12/17): friction
 					float h=m_map[i][j].water_height-m_map[i][j].land_height;
 					float u=2*sqrt(vv);
 					int RN=reynolds(u,h);
@@ -302,6 +298,11 @@ double water_map::step()
 		for(i=0;i<m_size_x;i++){
 			for(j=0;j<m_size_y;j++){
 				m_map[i][j].curr_vx+=m_map[i][j].delta_vx;
+				if(std::isnan(m_map[i][j].delta_vy)){
+					printf("nan found: i: %d; j: %d; timestep:%f \n",i,j,timestep);
+					throw PROGRAMMING_PANIC;
+				}
+
 				m_map[i][j].curr_vy+=m_map[i][j].delta_vy;
 				m_map[i][j].water_height+=m_map[i][j].delta_water_height;
 				if(m_map[i][j].delta_water_height!=0){
