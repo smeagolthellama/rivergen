@@ -252,15 +252,17 @@ double water_map::step()
 						std::cerr<<"please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: "<<RN<<std::endl;
 					}else{
 						float a=(u*kin_viscosity_si)/(h*h);
-						if(m_map[i][j].curr_vx>0){
-							m_map[i][j].delta_vx-=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
-						}else{
-							m_map[i][j].delta_vx+=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
-						}
-						if(m_map[i][j].curr_vy>0){
-							m_map[i][j].delta_vy-=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
-						}else{
-							m_map[i][j].delta_vy+=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+						if(a!=0){
+							if(m_map[i][j].curr_vx>0){
+								m_map[i][j].delta_vx-=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+							}else{
+								m_map[i][j].delta_vx+=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+							}
+							if(m_map[i][j].curr_vy>0){
+								m_map[i][j].delta_vy-=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+							}else{
+								m_map[i][j].delta_vy+=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
+							}
 						}
 					}
 					//spread out
