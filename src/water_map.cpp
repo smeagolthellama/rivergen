@@ -207,6 +207,7 @@ double water_map::step()
 							flag|=8;
 						}else{
 							m_map[i][j+delta_j].delta_vy+=(delta_j*(delta_a*d_w*vy)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vy)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
+							m_map[i][j+delta_j].delta_vx+=(delta_j*(delta_a*d_w*vx)+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height)*m_map[i][j+delta_j].curr_vx)/(delta_a*d_w+(m_map[i][j+delta_j].water_height-m_map[i][j+delta_j].land_height));
 							m_map[i][j].delta_water_height-=delta_a*d_w;
 						}
 						flag|=1;
@@ -218,6 +219,7 @@ double water_map::step()
 						}else{
 						
 							m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_b*d_w*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
+							m_map[i+delta_i][j].delta_vy+=(delta_i*(delta_b*d_w*vy)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vy)/(delta_b*d_w+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
 							m_map[i][j].delta_water_height-=delta_b*d_w;
 						}
 						flag|=2;
