@@ -198,7 +198,7 @@ double water_map::step()
 					delta_j = (vx > 0) ? 1 : -1;
 					delta_i = (vy > 0) ? 1 : -1;
 					//TO DO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)
-					if(j+delta_j<0 || j+delta_j>m_size_y || m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
+					if(j+delta_j<0  || m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
 						//can't go to x-neighbouring cell
 						//in this case, water bounces back into the original cell
 						m_map[i][j].delta_vx-= 2*delta_a*vx;
@@ -208,7 +208,7 @@ double water_map::step()
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=2;
 					}
-					if(j+delta_j<0 || j+delta_j>m_size_y ||i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
+					if(j+delta_j<0  ||i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
 						m_map[i][j].delta_vx-= 2*delta_a*vx;
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=4;
