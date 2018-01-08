@@ -11,7 +11,7 @@
 
 ///maximum size for map
 ///mekkora memoriat foglaljon le a program a terkep szamara?
-#define WATER_MAP_MAX_SIZE 400
+#define WATER_MAP_MAX_SIZE 300
 
 using std::array;
 
