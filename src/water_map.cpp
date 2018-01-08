@@ -301,6 +301,9 @@ double water_map::step()
 				m_map[i][j].curr_vx+=m_map[i][j].delta_vx;
 				m_map[i][j].curr_vy+=m_map[i][j].delta_vy;
 				m_map[i][j].water_height+=m_map[i][j].delta_water_height;
+				if(m_map[i][j].delta_water_height!=0){
+					printf("adding extra water to %d %d, %f\n",i,j,m_map[i][j].delta_water_height);
+				}
 				/*
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
