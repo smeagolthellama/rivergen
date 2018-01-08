@@ -234,7 +234,7 @@ double water_map::step()
 						}
 						flag|=4;
 					}
-					if(isnan(m_map[i][j].delta_water_height)){
+					if(std::isnan(m_map[i][j].delta_water_height)){
 						printf("nan found: d_a: %f; d_b: %f; d_ab: %f; d_w:%f\n",delta_a,delta_b,delta_ab,d_w);
 					}
 					//TO DO (mark#7#30/12/17): friction
