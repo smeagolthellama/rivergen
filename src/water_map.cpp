@@ -254,7 +254,7 @@ double water_map::step()
 						}else{
 							m_map[i][j].delta_vx+=a*timestep*(m_map[i][j].curr_vx/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
 						}
-						if(m_map[i][j].curr_vx>0){
+						if(m_map[i][j].curr_vy>0){
 							m_map[i][j].delta_vy-=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
 						}else{
 							m_map[i][j].delta_vy+=a*timestep*(m_map[i][j].curr_vy/(m_map[i][j].curr_vx+m_map[i][j].curr_vy));
