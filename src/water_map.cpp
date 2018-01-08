@@ -201,21 +201,21 @@ double water_map::step()
 					if(j+delta_j<0 || j+delta_j>m_size_y || m_map[i][j].water_height<m_map[i][j+delta_j].land_height) {
 						//can't go to x-neighbouring cell
 						//in this case, water bounces back into the original cell
-						m_map[i][j].delta_vx-= 2*delta_a*vx;
-						if(!(j+delta_j>m_size_y)){
-							flag|=1;
+						if(!( j+delta_j>m_size_y)){
+							m_map[i][j].delta_vx-= 2*delta_a*vx;
 						}
+						flag|=1;
 					}
 					if(i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j].land_height) {
 						m_map[i][j].delta_vy-= 2*delta_b*vy;
 						flag|=2;
 					}
 					if(j+delta_j<0 || j+delta_j>m_size_y ||i+delta_i<0 || i+delta_i>m_size_x || m_map[i][j].water_height<m_map[i+delta_i][j+delta_j].land_height) {
-						m_map[i][j].delta_vx-= 2*delta_a*vx;
-						m_map[i][j].delta_vy-= 2*delta_b*vy;
-						if(!(j+delta_j>m_size_y)){
-							flag|=4;
+						if(!( j+delta_j>m_size_y)){
+							m_map[i][j].delta_vx-= 2*delta_a*vx;
+							m_map[i][j].delta_vy-= 2*delta_b*vy;
 						}
+						flag|=4;
 					}
 					if(!(flag&2)) {
 						m_map[i+delta_i][j].delta_vx+=(delta_i*(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height)*vx)+(m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height)*m_map[i+delta_i][j].curr_vx)/(delta_a*(m_map[i][j].water_height-m_map[i][j].land_height+m_map[i+delta_i][j].water_height-m_map[i+delta_i][j].land_height));
