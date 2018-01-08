@@ -40,7 +40,8 @@ struct map_cell{
 	double delta_vx,delta_vy;
 	double delta_water_height;
 /** TODO (mark#1#12/26/17): add erosion */
-	//float delta_height
+	float delta_height;
+	float carried;
 };
 
 #define KM *1000
