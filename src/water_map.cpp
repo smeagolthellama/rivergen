@@ -236,6 +236,7 @@ double water_map::step()
 					}
 					if(std::isnan(m_map[i][j].delta_water_height)){
 						printf("nan found: d_a: %f; d_b: %f; d_ab: %f; d_w:%f\n",delta_a,delta_b,delta_ab,d_w);
+						throw PROGRAMMING_PANIC;
 					}
 					//TO DO (mark#7#30/12/17): friction
 					float h=m_map[i][j].water_height-m_map[i][j].land_height;
