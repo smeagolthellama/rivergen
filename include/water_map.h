@@ -40,8 +40,8 @@ struct map_cell{
 	double delta_vx,delta_vy;
 	double delta_water_height;
 /** TODO (mark#1#12/26/17): add erosion */
-	double delta_height;
-	double carried;
+	/*double delta_height;
+	double carried;*/
 };
 
 #define KM *1000
@@ -49,7 +49,7 @@ struct map_cell{
 #define CM *0.01
 #define MM *0.001
 
-
+#define momentumtransfer(m1,v1,m2,v2) (((m1)*(v1)+(m2)*(v2))/((m1)+(m2)))
 
 class water_map
 {
@@ -58,6 +58,8 @@ class water_map
 		water_map(int size_x, int size_y,double max_height);
 		//** Default destructor */
 		//~water_map();
+		double totaltime;
+		int steps;
 		unsigned int Get_size_x()
 		{
 			return m_size_x;
@@ -72,6 +74,7 @@ class water_map
 		double Get_min_height(){
 			return m_min_height;
 		}
+		void status();
 		///maga a terkep.
 		map_cell m_map[WATER_MAP_MAX_SIZE][WATER_MAP_MAX_SIZE]; //!< Member variable "m_hardness_map" describes map.
 
@@ -84,6 +87,7 @@ class water_map
 		unsigned int m_size_y; //!< Member variable "m_size_y", y size of map
 		double m_max_height; //!< maximum height of map
 		double m_min_height; //!< minimum height of map
+		int limiting_i,limiting_j; 
 };
 
 int getMapColour(double height,water_map* w);

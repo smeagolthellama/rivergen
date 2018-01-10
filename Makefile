@@ -1,16 +1,8 @@
-LDFLAGS:= -lSDL_bgi -lSDL2
-CPPFLAGS:= -Wall -g -std=c++11
+.PHONY: clean All
 
-Debug: rivergen
-Release: all
-
-all: rivergen Makefile
-
-rivergen: main.o src/water_map.o
-	g++ -g -o $@ $^ $(LDFLAGS)
-
-cleanDebug: clean
-
+All:
+	@echo "----------Building project:[ rivergen - Debug ]----------"
+	@"$(MAKE)" -f  "rivergen.mk"
 clean:
-	rm *.o
-	rm */*.o
+	@echo "----------Cleaning project:[ rivergen - Debug ]----------"
+	@"$(MAKE)" -f  "rivergen.mk" clean

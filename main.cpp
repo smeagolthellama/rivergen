@@ -45,14 +45,22 @@ int main()
 	water_map w(250,250,0.6);
 	w.graph();
 	getch();
-	int i;
+	int i,panics=0;
 	for(i=0;i<100000;i++){
 		t=w.step();
 		if(i%100==0){
 			w.graph();
 		}
+		w.status();
+		if(t==-1){
+			cerr<<"timestep panic "<<panics<<" thrown, might be good idea to stop.\n";
+			getch();
+			panics++;
+			if(panics>10){
+				return 1;
+			}
+		}
 		cout<<"timestep: "<<t<<endl;
 	}
-	getch();
 	return 0;
 }

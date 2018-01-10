@@ -43,6 +43,8 @@ water_map::water_map(int size_x, int size_y, double max_height)
 	unsigned int i, j;
 	m_max_height = -1e10;
 	m_min_height = 1e10;
+	steps=0;
+	totaltime=0;
 
 	for (i = 0; i < m_size_x; i++) {
 		for (j = 0; j < m_size_y; j++) {
@@ -75,7 +77,8 @@ water_map::water_map(int size_x, int size_y, double max_height)
 	while (j > 0 && fabs(m_map[0][j].land_height - max_height) < 1e-6) {
 		j--;
 	}
-
+	
+	limiting_i=limiting_j=0;
 	m_map[0][j].flags |= IS_WATER_SOURCE | HAS_WATER;
 	m_map[0][j].water_height = m_map[0][j].land_height + 1 MM;
 	printf("%f %f %u\n", m_max_height, m_min_height, j);
@@ -157,11 +160,12 @@ inline int reynolds(int v, int h)
 double water_map::step()
 {
 	static double timestep = 0.01;
-	static const signed char delta_is[8] = { -1, -1, 0, 1, 1, 1, 0, -1};
-	static const signed char delta_js[8] = { 0, 1, 1, 1, 0, -1, -1, -1};
-	static const double       massfrac[8] = { 1, .5, 1, .5, 1, .5, 1, .5};
+	static const signed char delta_is[8] = {-1,-1, 0, 1, 1, 1, 0,-1};
+	static const signed char delta_js[8] = { 0, 1, 1, 1, 0,-1,-1,-1};
+	static const double      massfrac[8] = { 1,.5, 1,.5, 1,.5, 1,.5};
+	static const double velocityfrac[8] =  {1,.707,1,.707,1,.707,1,.707};
 	map_cell *row;
-	unsigned int i, j;
+	unsigned int i, j,ti,tj;
 	double vv, maxvv, vx, vy;
 	double delta_a, delta_b, delta_ab, delta_h;
 	int   delta_i, delta_j;
@@ -169,10 +173,13 @@ double water_map::step()
 	char flag;
 	double min_tc = timestep * 1.1; //minty sea :D
 	double cell_tc;//salty sea
+	double othr_d_w=0;
 
 	try {
 		//zero all deltas
 		//the deltas have allready been aplied
+		steps++;
+		maxvv=0;
 		for(i = 0; i < m_size_x; i++) {
 			for(j = 0; j < m_size_y; j++) {
 				m_map[i][j].delta_vx = m_map[i][j].delta_vy = m_map[i][j].delta_water_height = 0;
@@ -184,25 +191,30 @@ double water_map::step()
 			row = m_map[i];
 
 			for (j = 0; j < m_size_y; j++) {
-				if(j == 162 && i == 0) {
-					printf("Habit of dying here...\n");
+				if(steps==23 && 3==i && 165==j){
+					printf(".");
 				}
-
 				if (row[j].flags & HAS_WATER) {
 					flag = 0;
 					vx = row[j].curr_vx;
 					vy = row[j].curr_vy; //faster access to velocities
 					vv = vx * vx + vy * vy; //velocity^2
-
+					
 					if (vv > maxvv) {
 						maxvv = vv;
+						ti=i;
+						tj=j;
 					}
 
-					delta_ab = (vx * timestep * vy * timestep) / (cell_size_si * cell_size_si);
-					delta_a = vx * timestep / cell_size_si - delta_ab;
-					delta_b = vy * timestep / cell_size_si - delta_ab;
+					delta_ab = fabs(vx * timestep * vy * timestep) / (cell_size_si * cell_size_si);// mass fraction into diagonal neighbour
+					delta_a = fabs(vx) * timestep / cell_size_si - delta_ab;//mass fraction that goes to cell a(x-neighbouring)
+					delta_b = fabs(vy) * timestep / cell_size_si - delta_ab;//mass fraction into y-neighbour
 					delta_j = (vx > 0) ? 1 : -1;
 					delta_i = (vy > 0) ? 1 : -1;
+					if(delta_ab>=1 || delta_a>=1 || delta_b>=1){
+						std::cerr<<"excessive velocity: (ab,a,b,vx,vy)"<<delta_ab<<' '<<delta_a<<' '<<delta_b<<' '<<vx<<' '<<vy<<'\n';
+						throw TIMESTEP_PANIC;
+					}
 					//momentum transfer
 					double d_w = (m_map[i][j].water_height - m_map[i][j].land_height);
 					if (d_w>1e-6) { // one micron of water will be held in place by surface tension!
@@ -215,9 +227,11 @@ double water_map::step()
 									m_map[i][j].delta_vx -= 2 * delta_a * vx;
 									flag |= 8;
 								} else {
-									m_map[i][j + delta_j].delta_vy += (delta_j * (delta_a * d_w * vy) + (m_map[i][j + delta_j].water_height - m_map[i][j + delta_j].land_height) * m_map[i][j + delta_j].curr_vy) / (delta_a * d_w + (m_map[i][j + delta_j].water_height - m_map[i][j + delta_j].land_height));
-									m_map[i][j + delta_j].delta_vx += (delta_j * (delta_a * d_w * vx) + (m_map[i][j + delta_j].water_height - m_map[i][j + delta_j].land_height) * m_map[i][j + delta_j].curr_vx) / (delta_a * d_w + (m_map[i][j + delta_j].water_height - m_map[i][j + delta_j].land_height));
+									othr_d_w=m_map[i][j + delta_j].water_height - m_map[i][j + delta_j].land_height;
+									m_map[i][j + delta_j].delta_vy += momentumtransfer(delta_a*d_w,vy,othr_d_w,m_map[i][j + delta_j].curr_vy) - m_map[i][j + delta_j].curr_vy;
+									m_map[i][j + delta_j].delta_vx += momentumtransfer(delta_a*d_w,vx,othr_d_w,m_map[i][j + delta_j].curr_vx) - m_map[i][j + delta_j].curr_vx;
 									m_map[i][j].delta_water_height -= delta_a * d_w;
+									m_map[i][j + delta_j].delta_water_height += delta_a * d_w;
 								}
 
 								flag |= 1;
@@ -230,28 +244,36 @@ double water_map::step()
 									m_map[i][j].delta_vy -= 2 * delta_b * vy;
 									flag |= 16;
 								} else {
-									m_map[i + delta_i][j].delta_vx += (delta_i * (delta_b * d_w * vx) + (m_map[i + delta_i][j].water_height - m_map[i + delta_i][j].land_height) * m_map[i + delta_i][j].curr_vx) / (delta_b * d_w + (m_map[i + delta_i][j].water_height - m_map[i + delta_i][j].land_height));
-									m_map[i + delta_i][j].delta_vy += (delta_i * (delta_b * d_w * vy) + (m_map[i + delta_i][j].water_height - m_map[i + delta_i][j].land_height) * m_map[i + delta_i][j].curr_vy) / (delta_b * d_w + (m_map[i + delta_i][j].water_height - m_map[i + delta_i][j].land_height));
+									othr_d_w=m_map[i + delta_i][j].water_height - m_map[i + delta_i][j].land_height;
+									m_map[i + delta_i][j].delta_vx += momentumtransfer(delta_b*d_w,vx,othr_d_w,m_map[i + delta_i][j].curr_vx) - m_map[i + delta_i][j].curr_vx;
+									m_map[i + delta_i][j].delta_vy += momentumtransfer(delta_b*d_w,vy,othr_d_w,m_map[i + delta_i][j].curr_vy) - m_map[i + delta_i][j].curr_vy;
 									m_map[i][j].delta_water_height -= delta_b * d_w;
+									m_map[i + delta_i][j].delta_water_height += delta_b * d_w;
 								}
-
 								flag |= 2;
 							}
 						}
-
 						if((flag & 3) == 3) {
 							if( m_map[i][j].water_height < m_map[i + delta_i][j + delta_j].land_height) {
 								m_map[i][j].delta_vx -= 2 * delta_a * vx;
 								m_map[i][j].delta_vy -= 2 * delta_b * vy;
 								flag |= 32;
 							} else {
-								m_map[i + delta_i][j + delta_j].delta_vx += (delta_j * (delta_a * d_w * vy) + (m_map[i + delta_i][j + delta_j].water_height - m_map[i + delta_i][j + delta_j].land_height) * m_map[i + delta_i][j + delta_j].curr_vy) / (delta_a * d_w + (m_map[i + delta_i][j + delta_j].water_height - m_map[i + delta_i][j + delta_j].land_height));
-								m_map[i + delta_i][j + delta_j].delta_vy += (delta_i * (delta_b * d_w * vx) + (m_map[i + delta_i][j + delta_j].water_height - m_map[i + delta_i][j + delta_j].land_height) * m_map[i + delta_i][j + delta_j].curr_vx) / (delta_b * d_w + (m_map[i + delta_i][j + delta_j].water_height - m_map[i + delta_i][j + delta_j].land_height));
+								othr_d_w=m_map[i + delta_i][j + delta_j].water_height - m_map[i + delta_i][j + delta_j].land_height;
+								m_map[i + delta_i][j + delta_j].delta_vx += momentumtransfer(delta_ab*d_w,vx,othr_d_w,m_map[i+delta_i][j+delta_j].curr_vx) - m_map[i+delta_i][j+delta_j].curr_vx;
+								m_map[i + delta_i][j + delta_j].delta_vy += momentumtransfer(delta_ab*d_w,vy,othr_d_w,m_map[i+delta_i][j+delta_j].curr_vy) - m_map[i+delta_i][j+delta_j].curr_vy;
 								m_map[i][j].delta_water_height -= delta_ab * d_w;
+								m_map[i + delta_i][j + delta_j].delta_water_height += delta_ab * d_w;
 							}
-
 							flag |= 4;
 						}
+					}
+					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+						std::cerr<<"Large accelaration (at momentum transfer) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
+						throw TIMESTEP_PANIC;
+					}
+					if(steps==23 && i==3 && j==163){
+						printf(".");
 					}
 					//TO DO (mark#7#30/12/17): friction
 					double h = m_map[i][j].water_height - m_map[i][j].land_height;
@@ -260,7 +282,7 @@ double water_map::step()
 
 					if(RN > 2300) {
 						//throw PROGRAMMING_PANIC;
-						std::cerr << "please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: " << RN << std::endl;
+						std::cerr << "Please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: " << RN <<", velocity was "<<u<<" and height was "<<h<< std::endl;
 					} else {
 						double a = (u * kin_viscosity_si) / (h * h);
 						if ((a*timestep)<1e-10) {
@@ -269,22 +291,18 @@ double water_map::step()
 
 						if(a != 0 && h != 0) {
 							if(a * timestep * a * timestep > vv) {
-								m_map[i][j].delta_vx -= m_map[i][j].curr_vx;
-								m_map[i][j].delta_vy -= m_map[i][j].curr_vy;
+								m_map[i][j].delta_vx = -m_map[i][j].curr_vx;
+								m_map[i][j].delta_vy = -m_map[i][j].curr_vy;
 							} else {
-								if(m_map[i][j].curr_vx > 0) {
-									m_map[i][j].delta_vx -= a * timestep * (m_map[i][j].curr_vx / (u * .5));
-								} else {
-									m_map[i][j].delta_vx += a * timestep * (m_map[i][j].curr_vx / (u * .5));
-								}
-
-								if(m_map[i][j].curr_vy > 0) {
-									m_map[i][j].delta_vy -= a * timestep * (m_map[i][j].curr_vy / (u * .5));
-								} else {
-									m_map[i][j].delta_vy += a * timestep * (m_map[i][j].curr_vy / (u * .5));
-								}
+								m_map[i][j].delta_vx -= a * timestep * (m_map[i][j].curr_vx / (u * .5));
+								m_map[i][j].delta_vy -= a * timestep * (m_map[i][j].curr_vy / (u * .5));
 							}
 						}
+					}
+					
+					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
+						throw TIMESTEP_PANIC;
 					}
 
 					//spread out
@@ -309,6 +327,7 @@ double water_map::step()
 
 						//if I am using more water than I have, PANIC!!!
 						if(volume > (cell_size_si * cell_size_si * delta_h)) {
+							std::cerr<<"Splurging in direction "<<k<<" (i+="<<delta_is[k]<<",j+="<<delta_js[k]<<")\tvolume: "<<volume<<", available: "<<delta_h*cell_size_si*cell_size_si<<"\n";
 							throw TIMESTEP_PANIC;
 						}
 
@@ -321,18 +340,36 @@ double water_map::step()
 						velocity = 2 * gravitationalConstant * delta_h * timestep / cell_size_si;
 
 						//modify timestep
-						if((cell_tc = OPTIMUM_FRACTION * cell_size_si / velocity) < min_tc) {
+						if((cell_tc =( OPTIMUM_FRACTION * cell_size_si / velocity)) < min_tc) {
 							min_tc = cell_tc;
+							limiting_i = i;
+							limiting_j = j;
 						}
 
 						//add velocity
-						m_map[i + delta_is[k]][j + delta_js[k]].delta_vx += delta_js[k] * (volume * velocity + (m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height) * cell_size_si * cell_size_si * m_map[i + delta_is[k]][j + delta_js[k]].curr_vx);
-						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy += delta_is[k] * (volume * velocity + (m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height) * cell_size_si * cell_size_si * m_map[i + delta_is[k]][j + delta_js[k]].curr_vy);
+						float mtx,mty;
+						othr_d_w = m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height;
+						mtx = momentumtransfer(volume,delta_js[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vx)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vx;
+						mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
+						m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
+						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
+						
+						if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+							std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<std::endl;
+							throw TIMESTEP_PANIC;
+						}
 					}
 				}
 			}
 		}
-
+		
+		if(min_tc*min_tc> OPTIMUM_FRACTION * OPTIMUM_FRACTION *cell_size_si*cell_size_si/maxvv){
+			min_tc= OPTIMUM_FRACTION * cell_size_si/ sqrt(maxvv);
+			limiting_i=ti;
+			limiting_j=tj;
+			std::cerr<<"seting min_tc to "<<min_tc<<", maxvv="<<maxvv<<"sqrt(maxvv)="<<sqrt(maxvv)<<'\n';
+		}
+		
 		//TODO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)
 		//aply deltas
 		for(i = 0; i < m_size_x; i++) {
@@ -340,23 +377,23 @@ double water_map::step()
 				m_map[i][j].curr_vx += m_map[i][j].delta_vx;
 
 				if(std::isnan(m_map[i][j].delta_vy)) {
-					printf("nan found: i: %d; j: %d; timestep:%f \n", i, j, timestep);
+					printf("nan found: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
 					throw PROGRAMMING_PANIC;
 				}
 
 				m_map[i][j].curr_vy += m_map[i][j].delta_vy;
 				m_map[i][j].water_height += m_map[i][j].delta_water_height;
 
-				if(m_map[i][j].delta_water_height != 0) {
-					printf("changing water to %d %d, %f\n", i, j, m_map[i][j].delta_water_height);
-				}
+				//if(m_map[i][j].delta_water_height != 0) {
+				//	printf("changing water on %d %d by %lf, to %lf\n", i, j, m_map[i][j].delta_water_height,m_map[i][j].water_height-m_map[i][j].land_height);
+				//}
 
 				/*
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
 				if(m_map[i][j].delta_water_height > 1e-10) {
 					if((m_map[i][j].flags & HAS_WATER) == 0) {
-						printf("adding water to %d %d, %f\n", i, j, m_map[i][j].delta_water_height);
+					//	printf("adding water to %d %d, %lf\n", i, j, m_map[i][j].delta_water_height);
 						m_map[i][j].flags |= HAS_WATER;
 					}
 				}else{
@@ -372,15 +409,21 @@ double water_map::step()
 				}
 			}
 		}
-
+		totaltime+=timestep;
 		timestep = min_tc;
 		return timestep;
 	} catch(int e) {
 		if(e != TIMESTEP_PANIC) {
 			throw;
 		}
-
+		
+		std::cerr<<"timestep panic at i "<<i<<" j "<<j<<'\n';
 		timestep /= 10;
 		return -1;
 	}
+}
+
+void water_map::status(){
+	map_cell &c=m_map[limiting_i][limiting_j];
+	std::cout<<steps<<'/'<<totaltime<< ':'<<limiting_i<<' '<<limiting_j<<": v(x y)"<<c.curr_vx<<' '<<c.curr_vy<<" water: "<<c.water_height<<" land: "<<c.land_height<<" deltas (same order): "<<c.delta_vx<<' '<<c.delta_vy<<' '<<c.delta_water_height<<std::endl;
 }
