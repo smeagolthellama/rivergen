@@ -51,7 +51,9 @@ int main()
 		if(i%100==0){
 			w.graph();
 		}
-		w.status();
+		if(i%10==0){
+			w.status();
+		}
 		if(t==-1){
 			cerr<<"timestep panic "<<panics<<" thrown, might be good idea to stop.\n";
 			getch();

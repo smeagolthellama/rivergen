@@ -8,6 +8,7 @@ extern "C" {
 #include <graphics.h>
 }
 
+#define IN_WATER 2e-3
 #define OPTIMUM_FRACTION 0.2
 #define Z0 1 MM
 
@@ -72,14 +73,14 @@ water_map::water_map(int size_x, int size_y, double max_height)
 		}
 	}
 
-	j = (m_size_y * 2) / 3;
+	j = (m_size_y * 4) / 5;
 	
 	while (j > 0 && fabs(m_map[0][j].land_height - max_height) < 1e-6) {
 		j--;
 	}
 	for(i=j;i>0 && i>j-10;i--){
 		m_map[0][i].flags |= IS_WATER_SOURCE | HAS_WATER;
-		m_map[0][i].water_height = m_map[0][j].land_height + 1 MM;
+		m_map[0][i].water_height = m_map[0][j].land_height + IN_WATER;
 		printf("%f %f %u\n", m_max_height, m_min_height, i);
 	}
 	limiting_i=limiting_j=0;
@@ -106,7 +107,7 @@ void water_map::graph()
 				} else {
 					putpixel(i, j, getWaterColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
 					putpixel(i + m_size_x, j, getWaterColour(m_map[i][j].water_height, this));
-					putpixel(i + 2 * m_size_x, j, BLUE);
+					putpixel(i + 2* m_size_x, j, getWaterDepthColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
 					//printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 			} else {
@@ -138,6 +139,21 @@ int getMapColour(double height, water_map *w)
 	//printf("%f %f\n",height,t);
 	return COLOR((t > 10) ? 128 + t * 1.25 : 255 - t * 12, 255 - t, 175 + 0.75 * t);
 }
+
+int getWaterDepthColour(double height, water_map *w)
+{
+	double t;
+
+	if (w->Get_max_height() - w->Get_min_height() == 0) {
+		throw NO_HEIGHT_DIFFERENCE;
+	}
+
+	t = ((height) / (IN_WATER));
+	t *= 100;
+	//printf("%f %f\n",height,t);
+	return COLOR((t > 10) ? t * 2.5 : 255 - t * 25, 255 - 2 * t, 100 + 1.55 * t);
+}
+
 
 int getWaterColour(double height, water_map *w)
 {
@@ -406,7 +422,7 @@ double water_map::step()
 
 				if(m_map[i][j].flags & IS_WATER_SOURCE) {
 					m_map[i][j].flags |= HAS_WATER;
-					m_map[i][j].water_height = m_map[i][j].land_height + 1 MM;
+					m_map[i][j].water_height = m_map[i][j].land_height + IN_WATER;
 				}
 			}
 		}

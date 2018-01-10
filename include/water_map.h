@@ -92,5 +92,6 @@ class water_map
 
 int getMapColour(double height,water_map* w);
 int getWaterColour(double height, water_map *w);
+int getWaterDepthColour(double height, water_map *w);
 
 #endif // WATER_MAP_H
