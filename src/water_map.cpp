@@ -354,6 +354,12 @@ double water_map::step()
 							} else {
 								delta_h = m_map[i][j].water_height - m_map[i + delta_is[k]][j + delta_js[k]].water_height;
 							}
+						}else{
+							///am at edge, do not want nans or a wall.
+							//if(i+delta_is[k]<0){
+							delta_h=m_map[i - delta_is[k]][j-delta_js[k]].water_height - m_map[i][j].water_height;
+							//}
+							
 						}
 
 						if(delta_h <= 0) {
