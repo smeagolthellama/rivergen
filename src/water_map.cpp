@@ -79,8 +79,8 @@ water_map::water_map(int size_x, int size_y, double max_height)
 		j--;
 	}
 	for(i=j;i>0 && i>j-10;i--){
-		m_map[0][i].flags |= IS_WATER_SOURCE | HAS_WATER;
-		m_map[0][i].water_height = m_map[0][j].land_height + IN_WATER;
+		m_map[j-i][i].flags |= IS_WATER_SOURCE | HAS_WATER;
+		m_map[j-i][i].water_height = m_map[0][j].land_height + IN_WATER;
 		printf("%f %f %u\n", m_max_height, m_min_height, i);
 	}
 	limiting_i=limiting_j=0;
