@@ -405,11 +405,11 @@ double water_map::step()
 							}
 						}
 					}
-					/*
+					
 					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
 						throw TIMESTEP_PANIC;
-					}*/
+					}
 
 					if(std::isnan(m_map[i][j].delta_vy)) {
 						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
@@ -441,16 +441,16 @@ double water_map::step()
 				m_map[i][j].curr_vy += m_map[i][j].delta_vy;
 				m_map[i][j].water_height += m_map[i][j].delta_water_height;
 
-				//if(m_map[i][j].delta_water_height != 0) {
-				//	printf("changing water on %d %d by %lf, to %lf\n", i, j, m_map[i][j].delta_water_height,m_map[i][j].water_height-m_map[i][j].land_height);
-				//}
+				if(m_map[i][j].delta_water_height != 0) {
+					printf("changing water on %d %d by %lf, to %lf\n", i, j, m_map[i][j].delta_water_height,m_map[i][j].water_height-m_map[i][j].land_height);
+				}
 
 				/*
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
 				if(m_map[i][j].delta_water_height > 1e-10) {
 					if((m_map[i][j].flags & HAS_WATER) == 0) {
-					//	printf("adding water to %d %d, %lf\n", i, j, m_map[i][j].delta_water_height);
+						printf("adding water to %d %d, %lf\n", i, j, m_map[i][j].delta_water_height);
 						m_map[i][j].flags |= HAS_WATER;
 					}
 				}else{
