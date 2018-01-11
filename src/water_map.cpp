@@ -392,8 +392,8 @@ double water_map::step()
 						mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
 						m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
 						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
-						if(std::isnan(m_map[i][j].delta_vy)) {
-							printf("nan found at splurge: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
+						if(std::isnan(m_map[i+delta_is[k]][j+delta_js[k]].delta_vy)) {
+							printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf \n",k, i, j, timestep);
 							throw PROGRAMMING_PANIC;
 						}
 						if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
