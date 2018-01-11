@@ -424,6 +424,10 @@ double water_map::step()
 					m_map[i][j].flags |= HAS_WATER;
 					m_map[i][j].water_height = m_map[i][j].land_height + IN_WATER;
 				}
+				if(j==m_size_y-1){
+					m_map[i][j].flags &= (~HAS_WATER);
+					m_map[i][j].water_height=m_map[i][j].land_height;
+				}
 			}
 		}
 		totaltime+=timestep;
