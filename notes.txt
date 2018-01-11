@@ -77,22 +77,22 @@ then calculate velocities based on /*potential energy*/ pressures etc.
 |#||#|
 |#||#| obviously enough, but what about ^?
 |#||#|
-
+WRONG{
 p=ρ*g*Δh
 a=(g*Δh)/x
 where x= edge cell + fraction of center cell (look at matrix)
-
+}
 +----+
 |    |
 |   #|
 |   #|
 |    |
 +----+
-
+## amount of cell that moves into neighbour
 P = ρ*g*Δh
 avg(P) = 1/2P
 ρ = 1000Kg/m^3
-F = avg(P)*1/2*l*Δh = 1/4*ρ*g*Δh^2l
+F = avg(P)*1/2*l*Δh = 1/4*ρ*g*Δh^2*l
 m = ρ*1/2*l*Δh*1/4*l = 1/8*l^2*ρ*Δh
 a = F/m = 2*(g*Δh)/l
 s = 1/2*a/t^2 = (g*Δh)/(l*t^2)
