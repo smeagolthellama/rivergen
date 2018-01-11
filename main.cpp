@@ -50,9 +50,10 @@ int main()
 		t=w.step();
 		if(i%100==0){
 			w.graph();
-		}
-		if(i%10==0){
+//		}
+	//	if(i%10==0){
 			w.status();
+			cout<<"timestep: "<<t<<endl;
 		}
 		if(t==-1){
 			cerr<<"timestep panic "<<panics<<" thrown, might be good idea to stop.\n";
@@ -62,7 +63,7 @@ int main()
 				return 1;
 			}
 		}
-		cout<<"timestep: "<<t<<endl;
+		
 	}
 	return 0;
 }
