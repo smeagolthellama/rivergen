@@ -105,13 +105,13 @@ void water_map::graph()
 					putpixel(i + m_size_x, j, RED);
 					putpixel(i + 2 * m_size_x, j, RED);
 				} else {
-					putpixel(i, j, getWaterColour(m_map[i][j].water_height, this));
+					putpixel(i, j, getWaterColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
 					putpixel(i + m_size_x, j, getWaterColour(m_map[i][j].water_height, this));
 					putpixel(i + 2* m_size_x, j, getWaterDepthColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
 					//printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 			} else {
-				putpixel(i, j, getWaterColour(m_map[i][j].land_height, this));
+				putpixel(i, j, getMapColour(m_map[i][j].land_height, this));
 				putpixel(i + m_size_x, j, getMapColour(m_map[i][j].land_height, this));
 				putpixel(i + 2 * m_size_x, j, BROWN);
 			}
@@ -166,7 +166,7 @@ int getWaterColour(double height, water_map *w)
 	t = ((height - w->Get_min_height()) / (w->Get_max_height() - w->Get_min_height()));
 	t *= 100;
 	//printf("%f %f\n",height,t);
-	return COLOR(t * 25, 25 * t,25 * t);
+	return COLOR((t > 10) ? t * 2.5 : 255 - t * 25, 255 - 2 * t, 100 + 1.55 * t);
 }
 
 inline int reynolds(int v, int h)
