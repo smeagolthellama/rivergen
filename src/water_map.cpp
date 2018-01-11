@@ -441,6 +441,7 @@ double water_map::step()
 				if(i==m_size_x-1){
 					m_map[i][j].flags &= (~HAS_WATER);
 					m_map[i][j].water_height=m_map[i][j].land_height;
+					m_map[i][j].curr_vx=m_map[i][j].curr_vy=0;
 				}
 			}
 		}
