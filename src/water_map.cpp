@@ -303,7 +303,7 @@ double water_map::step()
 						printf("nan found at momentum-motion: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
 						throw PROGRAMMING_PANIC;
 					}
-					if(fabs(m_map[i][j].delta_vx)>.3 || fabs(m_map[i][j].delta_vy)>.3){
+					if(fabs(m_map[i][j].delta_vx)>.6 || fabs(m_map[i][j].delta_vy)>.6){
 						std::cerr<<"Large accelaration (at momentum transfer) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
 						throw TIMESTEP_PANIC;
 					}
