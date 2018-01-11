@@ -105,13 +105,13 @@ void water_map::graph()
 					putpixel(i + m_size_x, j, RED);
 					putpixel(i + 2 * m_size_x, j, RED);
 				} else {
-					putpixel(i, j, getWaterColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
+					putpixel(i, j, getHeightColour(m_map[i][j].water_height, this));
 					putpixel(i + m_size_x, j, getWaterColour(m_map[i][j].water_height, this));
 					putpixel(i + 2* m_size_x, j, getWaterDepthColour(m_map[i][j].water_height - m_map[i][j].land_height, this));
 					//printf("%d %d %f\n",i,j,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
 			} else {
-				putpixel(i, j, getMapColour(m_map[i][j].land_height, this));
+				putpixel(i, j, getHeightColour(m_map[i][j].land_height, this));
 				putpixel(i + m_size_x, j, getMapColour(m_map[i][j].land_height, this));
 				putpixel(i + 2 * m_size_x, j, BROWN);
 			}
@@ -138,6 +138,20 @@ int getMapColour(double height, water_map *w)
 	t *= 100;
 	//printf("%f %f\n",height,t);
 	return COLOR((t > 10) ? 128 + t * 1.25 : 255 - t * 12, 255 - t, 175 + 0.75 * t);
+}
+
+int getHeightColour(double height, water_map *w)
+{
+	double t;
+
+	if (w->Get_max_height() - w->Get_min_height() == 0) {
+		throw NO_HEIGHT_DIFFERENCE;
+	}
+
+	t = ((height - w->Get_min_height()) / (w->Get_max_height() - w->Get_min_height()));
+	t *= 100;
+	//printf("%f %f\n",height,t);
+	return COLOR(2.55 * t, 2.55 * t, 2.55* t);
 }
 
 int getWaterDepthColour(double height, water_map *w)
