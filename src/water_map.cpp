@@ -53,7 +53,7 @@ water_map::water_map(int size_x, int size_y, double max_height)
 			xx = (double)i / (double)m_size_x;
 			yy = (double)j / (double)m_size_y;
 			double k = (yy - .5) / 4;
-			m_map[i][j].land_height = (xx / 4 + 20) / (xx + 20) * (0.5 + k * k);
+			m_map[i][j].land_height = ((xx / 4 + 15) / (xx + 15) * (0.5 + k * k))*2;
 			m_map[i][j].flags = 0;
 			m_map[i][j].curr_vx = m_map[i][j].curr_vy =  0;
 			m_map[i][j].water_height = m_map[i][j].land_height;
