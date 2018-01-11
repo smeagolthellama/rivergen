@@ -405,11 +405,11 @@ double water_map::step()
 							}
 						}
 					}
-					
+					/*
 					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
 						throw TIMESTEP_PANIC;
-					}
+					}*/
 
 					if(std::isnan(m_map[i][j].delta_vy)) {
 						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
