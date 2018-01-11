@@ -371,10 +371,10 @@ double water_map::step()
 								printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf \n",k, i, j, timestep);
 								throw PROGRAMMING_PANIC;
 							}
-							/*if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+							if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 								std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<std::endl;
-								throw TIMESTEP_PANIC;
-							}*/
+						//		throw TIMESTEP_PANIC;
+							}
 						}
 						
 					}
@@ -408,7 +408,7 @@ double water_map::step()
 					
 					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
-						throw TIMESTEP_PANIC;
+						//throw TIMESTEP_PANIC;
 					}
 
 					if(std::isnan(m_map[i][j].delta_vy)) {
