@@ -386,7 +386,7 @@ double water_map::step()
 						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
 						
 						if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
-							std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<std::endl;
+							std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<std::endl;
 							throw TIMESTEP_PANIC;
 						}
 					}
@@ -452,7 +452,7 @@ double water_map::step()
 			throw;
 		}
 		
-		std::cerr<<"timestep panic at i "<<i<<" j "<<j<<'\n';
+		std::cerr<<"timestep panic at i "<<i<<" j "<<j<<" timestep "<<timestep<<'\n';
 		timestep /= 10;
 		return -1;
 	}
