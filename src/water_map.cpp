@@ -354,6 +354,12 @@ double water_map::step()
 							} else {
 								delta_h = m_map[i][j].water_height - m_map[i + delta_is[k]][j + delta_js[k]].water_height;
 							}
+						}else{
+							///am at edge, do not want nans or a wall.
+							//if(i+delta_is[k]<0){
+							delta_h=m_map[i - delta_is[k]][j-delta_js[k]].water_height - m_map[i][j].water_height;
+							//}
+							
 						}
 
 						if(delta_h <= 0) {
@@ -373,7 +379,9 @@ double water_map::step()
 						//printf("%lg\n",volume);
 						//add volume
 						double d_wh = volume / (cell_size_si * cell_size_si);
-						m_map[i + delta_is[k]][j + delta_js[k]].delta_water_height += d_wh;
+						if((i + delta_is[k] >= 0) && (j + delta_js[k]) >= 0 && (i + delta_is[k]) < m_size_x && (j + delta_js[k]) < m_size_y){
+							m_map[i + delta_is[k]][j + delta_js[k]].delta_water_height += d_wh;
+						}
 						m_map[i][j].delta_water_height -= d_wh;
 						//calculate velocity
 						velocity = 2 * gravitationalConstant * delta_h * timestep / cell_size_si;
@@ -386,20 +394,23 @@ double water_map::step()
 						}
 
 						//add velocity
-						float mtx,mty;
-						othr_d_w = m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height;
-						mtx = momentumtransfer(volume,delta_js[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vx)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vx;
-						mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
-						m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
-						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
-						if(std::isnan(m_map[i+delta_is[k]][j+delta_js[k]].delta_vy)) {
-							printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf \n",k, i, j, timestep);
-							throw PROGRAMMING_PANIC;
+						if((i + delta_is[k] >= 0) && (j + delta_js[k]) >= 0 && (i + delta_is[k]) < m_size_x && (j + delta_js[k]) < m_size_y){
+							float mtx,mty;
+							othr_d_w = m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height;
+							mtx = momentumtransfer(volume,delta_js[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vx)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vx;
+							mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
+							m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
+							m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
+							if(std::isnan(m_map[i+delta_is[k]][j+delta_js[k]].delta_vy)) {
+								printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf \n",k, i, j, timestep);
+								throw PROGRAMMING_PANIC;
+							}
+							if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+								std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<std::endl;
+								throw TIMESTEP_PANIC;
+							}
 						}
-						if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
-							std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<std::endl;
-							throw TIMESTEP_PANIC;
-						}
+						
 					}
 				}
 			}
