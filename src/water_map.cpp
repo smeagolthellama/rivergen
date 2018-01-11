@@ -299,6 +299,10 @@ double water_map::step()
 							flag |= 4;
 						}
 					}
+					if(std::isnan(m_map[i][j].delta_vy)) {
+						printf("nan found at momentum-motion: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
+						throw PROGRAMMING_PANIC;
+					}
 					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 						std::cerr<<"Large accelaration (at momentum transfer) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
 						throw TIMESTEP_PANIC;
@@ -336,6 +340,10 @@ double water_map::step()
 						throw TIMESTEP_PANIC;
 					}
 
+					if(std::isnan(m_map[i][j].delta_vy)) {
+						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
+						throw PROGRAMMING_PANIC;
+					}
 					//spread out
 					for (int k = 0; k < 8; k++) {
 						delta_h = 0;
@@ -384,7 +392,10 @@ double water_map::step()
 						mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
 						m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
 						m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
-						
+						if(std::isnan(m_map[i][j].delta_vy)) {
+							printf("nan found at splurge: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
+							throw PROGRAMMING_PANIC;
+						}
 						if(fabs(m_map[i+delta_is[k]][j+delta_js[k]].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 							std::cerr<<"Large accelaration (splurge) of "<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vx<<' '<<m_map[i+delta_is[k]][j+delta_js[k]].delta_vy<<" at cycle "<<steps<<", i "<<i+delta_is[k]<<", j "<<j+delta_js[k]<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<std::endl;
 							throw TIMESTEP_PANIC;
