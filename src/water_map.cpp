@@ -367,7 +367,7 @@ double water_map::step()
 							continue;
 						}
 
-						//calculate volume
+						//calculate volume (notes, line 99)
 						volume = 0.5 * massfrac[k] * gravitationalConstant * delta_h * delta_h * timestep * timestep;
 
 						//if I am using more water than I have, PANIC!!!
@@ -397,8 +397,8 @@ double water_map::step()
 						if((i + delta_is[k] >= 0) && (j + delta_js[k]) >= 0 && (i + delta_is[k]) < m_size_x && (j + delta_js[k]) < m_size_y){
 							float mtx,mty;
 							othr_d_w = m_map[i + delta_is[k]][j + delta_js[k]].water_height - m_map[i + delta_is[k]][j + delta_js[k]].land_height;
-							mtx = momentumtransfer(volume,delta_js[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vx)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vx;
-							mty = momentumtransfer(volume,delta_is[k] *velocity*velocityfrac[k],othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
+							mtx = momentumtransfer(volume,delta_js[k]* (velocity*velocityfrac[k] + m_map[i][j].curr_vx),othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vx)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vx;
+							mty = momentumtransfer(volume,delta_is[k]* (velocity*velocityfrac[k] + m_map[i][j].curr_vy),othr_d_w*cell_size_si*cell_size_si,m_map[i + delta_is[k]][j + delta_js[k]].curr_vy)-m_map[i + delta_is[k]][j + delta_js[k]].curr_vy;
 							m_map[i + delta_is[k]][j + delta_js[k]].delta_vx +=  mtx;
 							m_map[i + delta_is[k]][j + delta_js[k]].delta_vy +=  mty;
 							if(std::isnan(m_map[i+delta_is[k]][j+delta_js[k]].delta_vy)) {
