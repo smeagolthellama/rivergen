@@ -303,46 +303,12 @@ double water_map::step()
 						printf("nan found at momentum-motion: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
 						throw PROGRAMMING_PANIC;
 					}
-					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+					if(fabs(m_map[i][j].delta_vx)>.3 || fabs(m_map[i][j].delta_vy)>.3){
 						std::cerr<<"Large accelaration (at momentum transfer) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
 						throw TIMESTEP_PANIC;
 					}
 					if(steps==23 && i==3 && j==163){
 						printf(".");
-					}
-					//TO DO (mark#7#30/12/17): friction
-					double h = m_map[i][j].water_height - m_map[i][j].land_height;
-					double u = 2 * sqrt(vv);
-					int RN = reynolds(u, h);
-
-					if(RN > 2300) {
-						//throw PROGRAMMING_PANIC;
-						std::cerr << "Please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: " << RN <<", velocity was "<<u<<" and height was "<<h<< std::endl;
-					} else {
-						double a = (u * kin_viscosity_si) / (h * h);
-						if ((a*timestep)<1e-10) {
-							a=0;
-						}
-
-						if(a != 0 && h != 0) {
-							if(a * timestep * a * timestep > vv) {
-								m_map[i][j].delta_vx = -m_map[i][j].curr_vx;
-								m_map[i][j].delta_vy = -m_map[i][j].curr_vy;
-							} else {
-								m_map[i][j].delta_vx -= a * timestep * (m_map[i][j].curr_vx / (u * .5));
-								m_map[i][j].delta_vy -= a * timestep * (m_map[i][j].curr_vy / (u * .5));
-							}
-						}
-					}
-					
-					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
-						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
-						throw TIMESTEP_PANIC;
-					}
-
-					if(std::isnan(m_map[i][j].delta_vy)) {
-						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
-						throw PROGRAMMING_PANIC;
 					}
 					//spread out
 					for (int k = 0; k < 8; k++) {
@@ -412,6 +378,44 @@ double water_map::step()
 						}
 						
 					}
+					//TO DO (mark#7#30/12/17): friction
+					double h = m_map[i][j].water_height + 0.5*m_map[i][j].delta_water_height - m_map[i][j].land_height;
+					double ux = vx + m_map[i][j].delta_vx;
+					double uy = vy + m_map[i][j].delta_vy;
+					double uu = ux*ux+uy*uy;
+					double u = 2 * sqrt(uu);
+					int RN = reynolds(u, h);
+
+					if(RN > 2300) {
+						//throw PROGRAMMING_PANIC;
+						std::cerr << "Please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: " << RN <<", velocity was "<<u<<" and height was "<<h<< std::endl;
+					} else {
+						double a = (u * kin_viscosity_si) / (h * h);
+						if ((a*timestep)<1e-10) {
+							a=0;
+						}
+
+						if(a != 0 && h != 0) {
+							if(a * timestep * a * timestep > uu) {
+								m_map[i][j].delta_vx = -m_map[i][j].curr_vx;
+								m_map[i][j].delta_vy = -m_map[i][j].curr_vy;
+							} else {
+								m_map[i][j].delta_vx -= a * timestep * (ux / (u*.5));
+								m_map[i][j].delta_vy -= a * timestep * (uy / (u*.5));
+							}
+						}
+					}
+					
+					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
+						throw TIMESTEP_PANIC;
+					}
+
+					if(std::isnan(m_map[i][j].delta_vy)) {
+						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
+						throw PROGRAMMING_PANIC;
+					}
+					
 				}
 			}
 		}
