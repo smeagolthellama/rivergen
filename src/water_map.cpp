@@ -380,7 +380,7 @@ double water_map::step()
 							}
 							if(fabs(m_map[i2][j2].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 								std::cerr<<"Large accelaration (splurge) of "<<m_map[i2][j2].delta_vx<<' '<<m_map[i2][j2].delta_vy<<" at cycle "<<steps<<", i "<<i2<<", j "<<j2<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<" vol:" << volume<< "othr_d_w" << othr_d_w*cell_size_si*cell_size_si<< "vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy <<std::endl;
-						//		throw TIMESTEP_PANIC;
+								throw TIMESTEP_PANIC;
 							}
 						}
 						
@@ -415,7 +415,7 @@ double water_map::step()
 					
 					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
 						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
-						//throw TIMESTEP_PANIC;
+						throw TIMESTEP_PANIC;
 					}
 
 					if(std::isnan(m_map[i][j].delta_vy)) {

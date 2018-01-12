@@ -63,9 +63,8 @@ int main()
 		}
 		if(t==-1){
 			cerr<<"timestep panic "<<panics<<" thrown, might be good idea to stop.\n";
-			getch();
 			panics++;
-			if(panics>10){
+			if(panics>100){
 				return 1;
 			}
 		}
