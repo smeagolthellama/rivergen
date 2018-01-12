@@ -5,6 +5,11 @@
 #include "include/water_map.h"
 
 #ifdef __linux
+#define _GNU_SOURCE
+#include <fenv.h>
+#endif
+
+#ifdef __linux
 extern "C"{
 #endif
 
@@ -38,6 +43,9 @@ void react_to_signals(int signum){
 
 int main()
 {
+#ifdef __linux
+	feenableexcept(FE_DIVBYZERO|FE_INVALID|FE_OVERFLOW);
+#endif
 	signal(SIGINT,react_to_signals);
 	signal(SIGUSR1,react_to_signals);
 	signal(SIGUSR2,react_to_signals);

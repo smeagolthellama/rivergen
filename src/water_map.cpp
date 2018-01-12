@@ -209,7 +209,7 @@ double water_map::step()
 		//zero all deltas
 		//the deltas have allready been aplied
 		steps++;
-		maxvv=0;
+		maxvv=0.001;
 		for(i = 0; i < m_size_x; i++) {
 			for(j = 0; j < m_size_y; j++) {
 				m_map[i][j].delta_vx = m_map[i][j].delta_vy = m_map[i][j].delta_water_height = 0;
@@ -251,7 +251,7 @@ double water_map::step()
 					double d_w = (m_map[i][j].water_depth);
 					if (d_w>1e-6) { // one micron of water will be held in place by surface tension!
 
-						if(delta_a != 0) {
+						if(delta_a > 1e-24) {
 							if(j2 > 0 && (j2) < m_size_y) {
 								if (m_map[i][j].water_depth+m_map[i][j].land_height < m_map[i][j2].land_height) {
 									//can't go to x-neighbouring cell
@@ -270,7 +270,7 @@ double water_map::step()
 							}
 						}
 
-						if(delta_b != 0) {
+						if(delta_b > 1e-24) {
 							if(i2 > 0 && i2 < m_size_x ) {
 								if( m_map[i][j].water_depth+m_map[i][j].land_height < m_map[i2][j].land_height) {
 									m_map[i][j].delta_vy -= 2 * delta_b * vy;
@@ -285,7 +285,7 @@ double water_map::step()
 								flag |= 2;
 							}
 						}
-						if((flag & 3) == 3) {
+						if((flag & 3) == 3 && delta_ab>1e-24) {
 							if( m_map[i][j].water_depth+m_map[i][j].land_height < m_map[i2][j2].land_height) {
 								m_map[i][j].delta_vx -= 2 * delta_a * vx;
 								m_map[i][j].delta_vy -= 2 * delta_b * vy;
@@ -299,6 +299,9 @@ double water_map::step()
 							}
 							flag |= 4;
 						}
+					}else{
+						m_map[i][j].delta_vy=-m_map[i][j].curr_vy;
+						m_map[i][j].delta_vx=-m_map[i][j].curr_vx;
 					}
 					if(std::isnan(m_map[i][j].delta_vy)) {
 						printf("nan found at momentum-motion: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
