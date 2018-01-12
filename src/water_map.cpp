@@ -374,12 +374,12 @@ double water_map::step()
 							m_map[i2][j2].delta_vx +=  mtx;
 							m_map[i2][j2].delta_vy +=  mty;
 							if(std::isnan(m_map[i2][j2].delta_vy)) {
-								printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf; delta_water_height ",k, i, j, timestep,m_map[i][j].delta_water_height);
+								printf("nan found at splurge %d: i: %d; j: %d; timestep:%lf; delta_water_height: %lf ",k, i, j, timestep,m_map[i][j].delta_water_height);
 								std::cerr<<"(splurge of "<<m_map[i2][j2].delta_vx<<' '<<m_map[i2][j2].delta_vy<<" at cycle "<<steps<<", i "<<i2<<", j "<<j2<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<" vol:" << volume<< "othr_d_w" << othr_d_w*cell_size_si*cell_size_si<< "vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy <<')'<< std::endl;
 								throw PROGRAMMING_PANIC;
 							}
 							if(fabs(m_map[i2][j2].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
-								std::cerr<<"Large accelaration (splurge) of "<<m_map[i2][j2].delta_vx<<' '<<m_map[i2][j2].delta_vy<<" at cycle "<<steps<<", i "<<i2<<", j "<<j2<<". momentums transfered (x y): "<<mtx<<' '<<mty<<" height diference: "<<delta_h<<" vol:" << volume<< "othr_d_w" << othr_d_w*cell_size_si*cell_size_si<< "vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy <<std::endl;
+								std::cerr<<"Large accelaration (splurge) of "<<m_map[i2][j2].delta_vx<<' '<<m_map[i2][j2].delta_vy<<" at cycle "<<steps<<", i "<<i2<<", j "<<j2<<". momentums transfered (x y): "<<mtx<<'\t'<<mty<<"\theight diference: "<<delta_h<<"\tvol: " << volume<< "\tothr_d_w:" << othr_d_w*cell_size_si*cell_size_si<< "\tvel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy <<std::endl;
 								throw TIMESTEP_PANIC;
 							}
 						}
