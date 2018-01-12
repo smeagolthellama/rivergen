@@ -447,17 +447,19 @@ double water_map::step()
 
 				m_map[i][j].curr_vy += m_map[i][j].delta_vy;
 				m_map[i][j].water_height += m_map[i][j].delta_water_height;
-
+#if DEBUG_LEVEL == 10
 				if(m_map[i][j].delta_water_height != 0) {
 					printf("changing water on %d %d by %lf, to %lf\n", i, j, m_map[i][j].delta_water_height,m_map[i][j].water_height-m_map[i][j].land_height);
 				}
-
+#endif
 				/*
 				m_map[i][j].land_height+=m_map[i][j].delta_land_height;
 				*/
 				if(m_map[i][j].delta_water_height > 1e-10) {
 					if((m_map[i][j].flags & HAS_WATER) == 0) {
+#if DEBUG_LEVEL == 10
 						printf("adding water to %d %d, %lf\n", i, j, m_map[i][j].delta_water_height);
+#endif
 						m_map[i][j].flags |= HAS_WATER;
 					}
 				}else{
