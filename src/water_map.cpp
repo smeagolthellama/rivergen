@@ -15,8 +15,6 @@ extern "C" {
 double gravitationalConstant = 9.81;
 double cachedCd[cacheSize];
 
-
-
 water_map::water_map(int size_x, int size_y)
 {
 	water_map(size_x, size_y, 1e10);
@@ -326,13 +324,13 @@ double water_map::step()
 							} else {
 								delta_h = (m_map[i][j].water_depth-m_map[i2][j2].water_depth) + (m_map[i][j].land_height - m_map[i2][j2].land_height);
 							}
-						}else{
+						}/*else{
 							///am at edge, do not want nans or a wall.
 							//if(i2<0){
 							delta_h=(m_map[i - delta_is[k]][j-delta_js[k]].water_depth - m_map[i][j].water_depth ) + (m_map[i - delta_is[k]][j-delta_js[k]].land_height -m_map[i][j].land_height);
 							//}
 							
-						}
+						}*/
 
 						if(delta_h < (Z0)/10) {
 							//no significant height diference.
@@ -379,10 +377,42 @@ double water_map::step()
 									<<mtx<<' '<<mty<<" height diference: "<<delta_h<<" vol:" << volume<< "othr_d_w" << othr_d_w*cell_size_si*cell_size_si<< "vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy<<'('<<velocity<<')' <<") ("<< m_map[i2][j2].curr_vx<< "," << m_map[i2][j2].curr_vy << ")" << std::endl;
 								throw PROGRAMMING_PANIC;
 							}
-							if(fabs(m_map[i2][j2].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
+							if(fabs(m_map[i2][j2].delta_vx*timestep)>0.5*OPTIMUM_FRACTION*cell_size_si || fabs(m_map[i][j].delta_vy*timestep)>0.5*OPTIMUM_FRACTION*cell_size_si){
+							//	if(othr_d_w>.1 MM){
+								if(i2<i || j2<j){
+									double h = m_map[i][j].water_depth+0.5*m_map[i][j].delta_water_height ;
+									double ux = vx + m_map[i][j].delta_vx;
+									double uy = vy + m_map[i][j].delta_vy;
+									double uu = ux*ux+uy*uy;
+									double u = 2 * sqrt(uu);
+									int RN = reynolds(u, h);
+
+									if(RN > 2300) {
+										//throw PROGRAMMING_PANIC;
+										std::cerr << "Please tell my programmer that he should have implemented turbulent flow and transitional flow as well. Please tell him that reynolds number was the following: " << RN <<", velocity was "<<u<<" and height was "<<h<< std::endl;
+									} else {
+										double a = (u * kin_viscosity_si) / (h * h);
+										if ((a*timestep)<1e-10) {
+											a=0;
+										}
+
+										if(a != 0 && h != 0) {
+											if(a * timestep * a * timestep > uu) {
+												m_map[i][j].delta_vx = -m_map[i][j].curr_vx;
+												m_map[i][j].delta_vy = -m_map[i][j].curr_vy;
+											} else {
+												m_map[i][j].delta_vx -= a * timestep * (ux / (u*.5));
+												m_map[i][j].delta_vy -= a * timestep * (uy / (u*.5));
+											}
+										}
+									}
+								}
+							}
+							if(fabs(m_map[i2][j2].delta_vx*timestep)>OPTIMUM_FRACTION*cell_size_si || fabs(m_map[i][j].delta_vy*timestep)>OPTIMUM_FRACTION*cell_size_si){
 								std::cerr<<"Large accelaration (splurge) of "<<m_map[i2][j2].delta_vx<<' '<<m_map[i2][j2].delta_vy<<" at cycle "<<steps<<", i "<<i2<<", j "<<j2<<". momentums transfered (x y): "
 									<<mtx<<' '<<mty<<" height diference: "<<delta_h<<" vol:" << volume<< "othr_d_w" << othr_d_w*cell_size_si*cell_size_si<< "vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy<<'('<<velocity<<')' <<") ("<< m_map[i2][j2].curr_vx<< "," << m_map[i2][j2].curr_vy << ")" << std::endl;
 								throw TIMESTEP_PANIC;
+								//}
 							}
 						}
 						
@@ -415,8 +445,8 @@ double water_map::step()
 						}
 					}
 					
-					if(fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1){
-						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'.'<<std::endl;
+					if((fabs(m_map[i][j].delta_vx)>1 || fabs(m_map[i][j].delta_vy)>1) && h>.5 MM){
+						std::cerr<<"Large accelaration (at friction braking) of "<<m_map[i][j].delta_vx<<' '<<m_map[i][j].delta_vy<<" at cycle "<<steps<<", i "<<i<<", j "<<j<<'('<<"timestep:"<<timestep<<" RN:"<<RN<<"vel:" <<m_map[i][j].curr_vx<< "," << m_map[i][j].curr_vy<<'('<<velocity<<')'<<" u:"<<u<<"("<<ux<<','<<uy<<") h:"<<h <<")"<< std::endl;
 						throw TIMESTEP_PANIC;
 					}
 
@@ -424,7 +454,6 @@ double water_map::step()
 						printf("nan found at friction: i: %d; j: %d; timestep:%lf \n", i, j, timestep);
 						throw PROGRAMMING_PANIC;
 					}
-					
 				}
 			}
 		}
@@ -434,6 +463,10 @@ double water_map::step()
 			limiting_i=ti;
 			limiting_j=tj;
 			std::cerr<<"seting min_tc to "<<min_tc<<", maxvv="<<maxvv<<"sqrt(maxvv)="<<sqrt(maxvv)<<'\n';
+			if(maxvv>1e6){
+				std::cerr<<"Mach 3 reached, giving up.";
+				throw PROGRAMMING_PANIC;
+			}
 		}
 		
 		//TODO (mark#9#30/12/17): transfer mass(water +(eventually) eroded material)

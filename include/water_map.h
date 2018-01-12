@@ -49,7 +49,7 @@ struct map_cell{
 #define CM *0.01
 #define MM *0.001
 
-#define momentumtransfer(m1,v1,m2,v2) (((m1)/((m1)+(m2)))*(2*v1-v2))
+#define momentumtransfer(m1,v1,m2,v2) (((m1)/((m1)+(m2)))*(v1-v2))
 
 class water_map
 {
