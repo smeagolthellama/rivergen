@@ -36,7 +36,7 @@ struct map_cell{
 	int flags; 
 	double land_height;
 	double curr_vx,curr_vy;
-	double water_height; ///above sea level, not above land
+	double water_depth; ///not above sea level, but above land
 	double delta_vx,delta_vy;
 	double delta_water_height;
 /** TODO (mark#1#12/26/17): add erosion */
@@ -49,7 +49,7 @@ struct map_cell{
 #define CM *0.01
 #define MM *0.001
 
-#define momentumtransfer(m1,v1,m2,v2) (((m1)*(v1)+(m2)*(v2))/((m1)+(m2)))
+#define momentumtransfer(m1,v1,m2,v2) (((m1)/((m1)+(m2)))*(2*v1-v2))
 
 class water_map
 {
