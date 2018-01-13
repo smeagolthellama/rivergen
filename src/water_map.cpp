@@ -100,7 +100,7 @@ void water_map::graph()
 		for (j = 0; j < m_size_y; j++) {
 			if (m_map[i][j].flags & (HAS_WATER | IS_WATER_SOURCE)) {
 				if(m_map[i][j].flags & IS_WATER_SOURCE) {
-					putpixel(i, j, RED);
+					putpixel(i, j, getHeightColour(m_map[i][j].water_depth+m_map[i][j].land_height, this));
 					putpixel(i + m_size_x, j, RED);
 					putpixel(i + 2 * m_size_x, j, RED);
 				} else {
