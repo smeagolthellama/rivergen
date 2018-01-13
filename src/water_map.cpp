@@ -3,12 +3,13 @@
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 
 extern "C" {
 #include <graphics.h>
 }
 
-#define IN_WATER 2e-3
+#define IN_WATER 5e-3
 #define OPTIMUM_FRACTION 0.2
 #define Z0 1 MM
 
@@ -154,16 +155,25 @@ int getHeightColour(double height, water_map *w)
 
 int getWaterDepthColour(double height, water_map *w)
 {
+	static bool loaded=false;
+	static float loads[1000][3];
+	if(!loaded){
+		loaded = true;
+		std::ifstream in("gradient.txt");
+		int i=0;
+		while(!in.eof()){
+			in>>loads[i][0]>>loads[i][1]>>loads[i][2];
+			i++;
+		}
+	}
 	double t;
 
-	if (w->Get_max_height() - w->Get_min_height() == 0) {
-		throw NO_HEIGHT_DIFFERENCE;
-	}
+	t = ((height) / (IN_WATER*2));
 
-	t = ((height) / (IN_WATER));
-	t *= 100;
+	return COLOR(loads[(int)(t*1000.0)][0]*255,loads[(int)(t*1000.0)][1]*255,loads[(int)(t*1000.0)][2]*255);
+	/*t *= 100;
 	//printf("%f %f\n",height,t);
-	return COLOR((t > 10) ? t * 2.5 : 255 - t * 25, 255 - 2 * t, 100 + 1.55 * t);
+	return COLOR((t > 10) ? t * 2.5 : 255 - t * 25, 255 - 2 * t, 100 + 1.55 * t);*/
 }
 
 
