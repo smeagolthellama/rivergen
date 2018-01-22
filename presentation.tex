@@ -1,0 +1,71 @@
+\documentclass{beamer}
+\usepackage{polyglossia}
+\setdefaultlanguage{hungarian}
+\title[A víz folyása]{A víz folyása}
+\subtitle{avagy a titokzatos hóember}
+\author[Gardner]{M.~Gardner}
+\usetheme{Berkeley}
+\usecolortheme{beaver}
+\setbeamerfont{title}{family=\rm}
+\begin{document}
+	\frame{\titlepage}
+	\begin{frame}
+		\frametitle{A kitűzött feladat}
+		\begin{itemize}
+			\item A modern játékiparban nagyon fontos a fantasztikus világok megteremtése.
+			\pause
+			\item A programozók ezeknek a domborzatát általában fraktálként generálják, vagyis egy egyszerű függvény használatával
+			\pause
+			\begin{itemize}
+				\item Ha valakit érdekel, megnézheti a "gyémánt-kocka" algoritmust.
+			\end{itemize}
+			\pause
+			\item amikor ezt először hallottam, nagyon meglepődtem, mert az erózió folyamatát nagyon könnyű elképzelni
+			\pause
+			\item Ezért, eldöntöttem, hogy megpróbálom modellezni az eróziót, és ezáltal generálok egy képzeletbeli tájat.
+		\end{itemize}
+		%Content goes here
+	\end{frame}
+	\begin{frame}
+		\frametitle{A szimuláció}
+		\begin{itemize}
+			\item Mivel az erózió legfontosabb eleme a víz, eldöntöttem ennek a folyását modellezni.
+			\pause
+			\item Az vizet valamibe kell önteni, hogy folyjon, ezert írtam egy egyszerű függvényt:
+			\begin{equation}
+				k(y)=\frac{(y-0.5)}{4}
+			\end{equation}
+			\begin{equation}
+				f(x,y)=\frac{(\frac{x}{4}+15)}{(x+15)*(0.5*k(y)^{2})}
+			\end{equation}
+			%More content goes here
+		\end{itemize}
+\end{frame}
+	\begin{frame}
+		\XeTeXpdffile func.pdf width \textwidth
+	\end{frame}
+	% etc
+	\begin{frame}
+		\begin{itemize}
+			\item A térképet a memóriában egy $250 \times 250$ tömb jelképezi, aminek több jellemzője van:
+
+			\pause
+			\begin{itemize}
+				\item A földnek a magassága
+			\pause
+				\item Sebesség (x-re és y-re bontva)
+			\pause
+				\item A víz mélysége
+			\pause
+				\item Az utóbbi kettő mennyiség egy bizonyos időmenyiségre eső változása
+			\pause
+			\end{itemize}
+			\item ezenkívül van még néhány függvény aminek a segítségével léptetjük az időt és kirajzolhatjuk a képernyőre egy térképet a szimuláció jelenlegi állapotáról.
+			\pause
+			\item Az első ilzen kirajzolás látható a következő dián.
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\XeTeXpdffile save_0.pdf width \textwidth
+	\end{frame}
+\end{document}
