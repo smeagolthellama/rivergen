@@ -18,16 +18,13 @@ cleanDebug: clean
 veryclean: clean
 	mkdir $(TIMESTAMP); mv *.bmp $(TIMESTAMP)
 	
-presentation.pdf: save_0.pdf presentation.tex
+presentation.pdf: save_0.pdf presentation.tex movingcell.tex
 	xelatex presentation.tex
 
 clean:
 	-rm *.o
 	-rm */*.o
 
-save_0.pdf: save_0.bmp
+%.pdf: %.bmp
+	convert $*.bmp $*.pdf
 
-save_0.bmp: rivergen
-	-./rivergen &
-	sleep 10
-	killall rivergen

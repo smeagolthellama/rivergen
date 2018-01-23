@@ -1,5 +1,6 @@
 \documentclass{beamer}
 \usepackage{polyglossia}
+\usepackage{tikz}
 \setdefaultlanguage{hungarian}
 \title[A víz folyása]{A víz folyása}
 \subtitle{avagy a titokzatos hóember}
@@ -13,15 +14,15 @@
 		\frametitle{A kitűzött feladat}
 		\begin{itemize}
 			\item A modern játékiparban nagyon fontos a fantasztikus világok megteremtése.
-			\pause
+			
 			\item A programozók ezeknek a domborzatát általában fraktálként generálják, vagyis egy egyszerű függvény használatával
-			\pause
+			
 			\begin{itemize}
 				\item Ha valakit érdekel, megnézheti a "gyémánt-kocka" algoritmust.
 			\end{itemize}
-			\pause
+			
 			\item amikor ezt először hallottam, nagyon meglepődtem, mert az erózió folyamatát nagyon könnyű elképzelni
-			\pause
+			
 			\item Ezért, eldöntöttem, hogy megpróbálom modellezni az eróziót, és ezáltal generálok egy képzeletbeli tájat.
 		\end{itemize}
 		%Content goes here
@@ -30,7 +31,7 @@
 		\frametitle{A szimuláció}
 		\begin{itemize}
 			\item Mivel az erózió legfontosabb eleme a víz, eldöntöttem ennek a folyását modellezni.
-			\pause
+			
 			\item Az vizet valamibe kell önteni, hogy folyjon, ezert írtam egy egyszerű függvényt:
 			\begin{equation}
 				k(y)=\frac{(y-0.5)}{4}
@@ -40,7 +41,7 @@
 			\end{equation}
 			%More content goes here
 		\end{itemize}
-\end{frame}
+	\end{frame}
 	\begin{frame}
 		\XeTeXpdffile func.pdf width \textwidth
 	\end{frame}
@@ -49,23 +50,74 @@
 		\begin{itemize}
 			\item A térképet a memóriában egy $250 \times 250$ tömb jelképezi, aminek több jellemzője van:
 
-			\pause
+			
 			\begin{itemize}
 				\item A földnek a magassága
-			\pause
+			
 				\item Sebesség (x-re és y-re bontva)
-			\pause
+			
 				\item A víz mélysége
-			\pause
+			
 				\item Az utóbbi kettő mennyiség egy bizonyos időmenyiségre eső változása
-			\pause
+			
 			\end{itemize}
 			\item ezenkívül van még néhány függvény aminek a segítségével léptetjük az időt és kirajzolhatjuk a képernyőre egy térképet a szimuláció jelenlegi állapotáról.
-			\pause
-			\item Az első ilzen kirajzolás látható a következő dián.
+			
+			\item Az első ilyen kirajzolás látható a következő dián.
 		\end{itemize}
 	\end{frame}
 	\begin{frame}
+		Az első kép
 		\XeTeXpdffile save_0.pdf width \textwidth
 	\end{frame}
-\end{document}
+	\begin{frame}
+		\begin{itemize}
+			\item A víznek a folyásának szimulációját több részre bontottam:
+			
+			\begin{itemize}
+				\item A víz sodródása
+				
+				\item A víz szétfolyása
+				
+				\item A súrlódás
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{A víz sodródása}
+		\begin{itemize}
+			\item Ha a víz már mozog, akkor az más víztömegeket is tud mozgatni.
+			
+			\item Mivel csak kis időegységre számitunk minden változást, a víznek csak egy kis része folyik át a szomszédjaiba:
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+	\begin{itemize}\item($\mathbf{A}$,$\mathbf{B}$ és $\mathbf{AB}$ egynél kissebb számok, amik azt jelentik hogy az egész cellából mennyi megy át az adott irányban szomszédos cellába)\end{itemize}
+				\center{\include{movingcell}}
+	\end{frame}
+	\begin{frame}
+		Így megkapjuk a következő képleteket:
+		\begin{equation}
+			v\,'_2=\frac{\mathbf{X}\times m_1\times v_1 + m_2\times v_2}{\mathbf{X}\times m_1 + m_2}
+		\end{equation}
+		\begin{equation}
+			m'_2=m_2+\mathbf{X}\times m_1
+		\end{equation}
+		Ahol $\mathbf{X}$ az $\mathbf{A}$,$\mathbf{B}$ vagy $\mathbf{AB}$ közül lehet bármelyik
+	\end{frame}
+	\begin{frame}
+		\begin{itemize}
+			\item Ezeket az arányokat a következő egyenletek határozzák meg:
+		\end{itemize}
+		\begin{equation}
+			\mathbf{AB} = \frac{|v_x t \times v_y t|}{l^2}
+		\end{equation}
+		\begin{equation}
+			\mathbf{A} = \frac{|v_x|\times t}{l}-\mathbf{AB}
+		\end{equation}
+		\begin{equation}
+			\mathbf{B} = \frac{|v_y|\times t}{l}-\mathbf{AB}
+		\end{equation}
+		Ahol $t$ az egy lépésnyi itőt(ami valtozhat), $l$ pedig a cella szélességét
+	\end{frame}
+	\end{document}
