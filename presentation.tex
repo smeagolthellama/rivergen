@@ -1,7 +1,7 @@
 \documentclass{beamer}
 \usepackage{polyglossia}
 \usepackage{tikz}
-\setdefaultlanguage{hungarian}
+\setdefaultlanguage{magyar}
 \title[A víz folyása]{A víz folyása}
 \subtitle{avagy a titokzatos hóember}
 \author[Gardner]{M.~Gardner}
@@ -18,7 +18,7 @@
 			\item A programozók ezeknek a domborzatát általában fraktálként generálják, vagyis egy egyszerű függvény használatával
 			
 			\begin{itemize}
-				\item Ha valakit érdekel, megnézheti a "gyémánt-kocka" algoritmust.
+				\item Ha valakit érdekel, megnézheti a ,,gyémánt-kocka'' algoritmust.
 			\end{itemize}
 			
 			\item amikor ezt először hallottam, nagyon meglepődtem, mert az erózió folyamatát nagyon könnyű elképzelni
@@ -37,7 +37,7 @@
 				k(y)=\frac{(y-0.5)}{4}
 			\end{equation}
 			\begin{equation}
-				f(x,y)=\frac{(\frac{x}{4}+15)}{(x+15)*(0.5*k(y)^{2})}
+				f(x,y)=\frac{(\frac{x}{4}+15)}{(x+15)\times (0.5\times {k(y)}^{2})}
 			\end{equation}
 			%More content goes here
 		\end{itemize}
@@ -88,11 +88,11 @@
 		\begin{itemize}
 			\item Ha a víz már mozog, akkor az más víztömegeket is tud mozgatni.
 			
-			\item Mivel csak kis időegységre számitunk minden változást, a víznek csak egy kis része folyik át a szomszédjaiba:
+			\item Mivel csak kis időegységre számítunk minden változást, a víznek csak egy kis része folyik át a szomszédjaiba:
 		\end{itemize}
 	\end{frame}
 	\begin{frame}
-	\begin{itemize}\item($\mathbf{A}$,$\mathbf{B}$ és $\mathbf{AB}$ egynél kissebb számok, amik azt jelentik hogy az egész cellából mennyi megy át az adott irányban szomszédos cellába)\end{itemize}
+	\begin{itemize}\item($\mathbf{A}$,$\mathbf{B}$ és $\mathbf{AB}$ egynél kisebb számok, amik azt jelentik hogy az egész cellából mennyi megy át az adott irányban szomszédos cellába)\end{itemize}
 				\center{\include{movingcell}}
 	\end{frame}
 	\begin{frame}
@@ -118,6 +118,81 @@
 		\begin{equation}
 			\mathbf{B} = \frac{|v_y|\times t}{l}-\mathbf{AB}
 		\end{equation}
-		Ahol $t$ az egy lépésnyi itőt(ami valtozhat), $l$ pedig a cella szélességét
+		Ahol $t$ az egy lépésnyi időt (ami változhat), $l$ pedig a cella szélességét jelenti.
 	\end{frame}
-	\end{document}
+	\begin{frame}
+		\frametitle{A víz szétfolyása}
+		\begin{itemize}
+			\item Ha van egy cellában víz, és a szomszédaiban nincs, akkor az a saját súlya alatt szét fog esni.
+		\end{itemize}
+		\center{\include{spill}}
+	\end{frame}
+	\begin{frame}
+		\begin{itemize}
+			\item Azt, hogy menyi víz megy melyik szomszédba, egy Gauss-elhomályosítás alapján dönti el az algoritmus (a különböző szélen levőek az illető szélen szomszédos cellába irányuló víztömeg arányát jelenti, a sarkok ugyanazt, és a középen levő arány ott marad (egyenlőre)):
+		\end{itemize}
+	%	\center{
+			\include{spilldist}
+	%	}
+	\end{frame}
+	\begin{frame}[allowframebreaks]
+		\frametitle{a szétfolyásnak egyenletei}
+		\begin{itemize}
+			\item Így megkapjuk a következőegyenleteket:
+			\begin{equation}
+				P = \rho g\Delta h
+			\end{equation}
+			\begin{equation}
+				avg(P) = \frac{P}{2}
+			\end{equation}
+			\begin{equation}
+				F = \frac{avg(P)\times l\times \Delta h }{2}= \frac{\rho \times g\times \Delta h^2\times l}{4}
+			\end{equation}
+			\begin{equation}
+				m = \frac{l^2\times \rho \times \Delta h}{8}
+			\end{equation}
+			\begin{equation}
+				a = \frac{F}{m} = 2\times \frac{g\times \Delta h}{l}
+			\end{equation}
+			\begin{equation}
+				s = \frac{a}{t^2\times 2} = \frac{g\times \Delta h}{l\times t^2}
+			\end{equation}
+			\begin{equation}
+				D_m = \frac{m\times s}{\frac{l}{4}} = \frac{\rho \times g\times \Delta h^2}{2}
+			\end{equation}
+			\begin{equation}
+				v = a\times t = \frac{2\times g\times \Delta h\times t}{l}
+			\end{equation}
+				(ahol $\Delta h$ a vízszintkülönbség)
+			\item Mivelhogy ezek az egyenletek a szélekre voltak készítve, hogy a sarkokra is alkalmas legyen, néhányat (pontosabban 10 és 11) 2-vel kell osztani, másokat pedig (12 és 13) szorozni.
+			\item Ezekből kiindulva pedig megkaphatjuk azt, hogy menyi víz megy át a szomszédos cellákba 
+		\end{itemize}
+	\end{frame}
+	\begin{frame}[allowframebreaks]
+		\frametitle{A súrlódás}
+		\begin{itemize}
+			\item A víz súrlódása eléggé komplikált, mivelhogy a mélységtől és sebességtől függően változik.
+			\item Ezt a függést a Reynolds szám fejezi ki:
+			\begin{equation}
+				Re=\frac{u \times h}{\nu}
+			\end{equation}
+			Ahol $\nu$ a kinematikus viszkozitást (az abszolút viszkozitás a sűrűséggel osztva) és $u$ a felszíni sebességet jelenti.
+			\item Ha $Re < 2300$, akkor lamináris áramlásról van szó. 
+			\item Ha $Re > 4000$, akkor turbulensről.
+			\item Ha egyik se, akkor átmeneti, és az angol wikipédia szerint a kettő keveréke észlelhető.
+		\end{itemize}
+		\begin{itemize}
+			\item Szerencsére nem kellett se az átmenetet se a turbulenset modellezni (habár megvolt már az egyenlet:).
+				\begin{equation}
+					\frac{F_f}{l}=C_D\frac{u^2}{h}
+				\end{equation}
+				\begin{equation}
+					C_D=\frac{\kappa^2}{[\ln(h/z_0)-1]^2}
+                \end{equation}
+			\item A lamináris folyásnak a súrlódása:
+                \begin{equation}
+                    F_f=\mu*l*l*u/h
+                \end{equation}
+		\end{itemize}
+	\end{frame}
+\end{document}

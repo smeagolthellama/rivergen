@@ -18,7 +18,7 @@ cleanDebug: clean
 veryclean: clean
 	mkdir $(TIMESTAMP); mv *.bmp $(TIMESTAMP)
 	
-presentation.pdf: save_0.pdf presentation.tex movingcell.tex
+presentation.pdf: save_0.pdf presentation.tex movingcell.tex spill.tex spilldist.tex
 	xelatex presentation.tex
 
 clean:

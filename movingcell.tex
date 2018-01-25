@@ -7,7 +7,7 @@
 % The following commands are not supported in PSTricks at present
 % We define them conditionally, so when they are implemented,
 % this pgf file will use them.
-\ifx\du\undefined
+\ifx\du\undefined%
   \newlength{\du}
 \fi
 \setlength{\du}{35\unitlength}
@@ -98,8 +98,7 @@
 \node[anchor=base west,inner sep=0pt,outer sep=0pt,color=dialinecolor] at (6.242789\du,8.840007\du){AB};
 \pgfsetlinewidth{0.060000\du}
 \pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
+\pgfsetbuttcap{%
 \definecolor{diafillcolor}{rgb}{0.000000, 0.000000, 0.000000}
 \pgfsetfillcolor{diafillcolor}
 \pgfsetfillopacity{1.000000}
