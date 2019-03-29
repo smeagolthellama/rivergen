@@ -28,3 +28,5 @@ clean:
 %.pdf: %.bmp
 	convert $*.bmp $*.pdf
 
+%.bpm: rivergen
+	./rivergen
