@@ -9,7 +9,7 @@ extern "C" {
 #include <graphics.h>
 }
 
-#define IN_WATER 5e-3
+#define IN_WATER 6e-3
 #define OPTIMUM_FRACTION 0.2
 #define Z0 1 MM
 
@@ -77,12 +77,17 @@ water_map::water_map(int size_x, int size_y, double max_height)
 	while (j > 0 && fabs(m_map[0][j].land_height - max_height) < 1e-6) {
 		j--;
 	}
-	for(i=j;i>0 && i>j-10;i--){
-		m_map[j-i][i].flags |= IS_WATER_SOURCE | HAS_WATER;
-		m_map[j-i][i].water_depth =  IN_WATER;
+	/*for(i=j;i>0 && i>j-10;i--){
+		m_map[j-i+20][i].flags |= IS_WATER_SOURCE | HAS_WATER;
+		m_map[j-i+20][i].water_depth =  IN_WATER;
 		printf("%f %f %u\n", m_max_height, m_min_height, i);
-	}
+	}*/
+	m_map[size_x-j][size_y-j].flags |= IS_WATER_SOURCE | HAS_WATER;
+	m_map[size_x-j][size_y-j].water_depth=IN_WATER;
 	limiting_i=limiting_j=0;
+	for(i=size_x/2,j=0;j<size_y/2;j++){
+		m_map[i][j].land_height=max_height;
+	}
 }
 
 

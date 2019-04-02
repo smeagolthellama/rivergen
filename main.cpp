@@ -62,7 +62,7 @@ int main()
 	int i,panics=0;
 	for(i=0;i<100000;i++){
 		t=w.step();
-		if(i%100==0){
+		if(i%50==0){
 			w.graph();
 //		}
 	//	if(i%10==0){

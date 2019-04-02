@@ -2,6 +2,8 @@ LDFLAGS:= -lSDL_bgi -lSDL2
 CPPFLAGS:= -Wall -g -std=c++11
 TIMESTAMP:= $(shell date +%Y%M%d-%H%m)
 
+cropped: save_1000.bmp
+	for a in save*.bmp; do convert $$a -crop 250x250 cropped_$$(basename -s .bmp $$a).png; done
 
 all: rivergen Makefile gradient.txt presentation.pdf
 
@@ -28,5 +30,9 @@ clean:
 %.pdf: %.bmp
 	convert $*.bmp $*.pdf
 
-%.bpm: rivergen
+%.bmp: rivergen
 	./rivergen
+
+animate: animate.ini animate.pov cropped
+	povray animate.ini
+	
