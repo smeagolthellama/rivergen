@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 extern "C" {
 #include <graphics.h>
@@ -30,6 +31,13 @@ water_map::water_map(int size_x, int size_y, double max_height)
 	if ((size_x > WATER_MAP_MAX_SIZE) || (size_y > WATER_MAP_MAX_SIZE)) {
 		throw CANT_MAKE_MAP;
 	}
+#ifdef DYNAMIC_ALLOC
+	m_map=reinterpret_cast<map_cell**>(calloc(size_y*sizeof(map_cell*)/*header*/+size_x*size_y*sizeof(map_cell)/*body*/,1));
+	m_map[0]=reinterpret_cast<map_cell*>(m_map)+size_y;
+	for(int i=1;i<size_y;i++){
+		m_map[i]=m_map[i-1]+size_x;
+	}
+#endif
 
 	/*	if(cachedCd[0]==0){
 			int tmp;

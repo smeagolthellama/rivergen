@@ -8,7 +8,6 @@ camera{
 	angle		35
 	location	<4.0,2.0,-3>
 	look_at		<0,0,0>
-	rotate		<0,-360*(clock/10),0>
 }
   sky_sphere {
     pigment {
@@ -27,7 +26,7 @@ light_source{
 object{
 	height_field{
 		png concat("cropped_save_",str(floor(clock*10),0,0),"-0.png")
-		smooth
+//		smooth
 	}
 	texture{
 		pigment{
@@ -50,4 +49,13 @@ object{
 	}	
 	translate <-0.5,-0.5,-0.5>
 	scale <2.5,0.8,2.5>
+	rotate		<0,-360*(clock/10),0>
+}
+
+text{
+	ttf "timrom.ttf" concat("cropped_save_",str(floor(clock*10),0,0),"-2.png") 1,0
+	material{M_Water}
+	translate <-2.5,2.5,0>
+	rotate <15,-49,0>
+	scale 0.2
 }

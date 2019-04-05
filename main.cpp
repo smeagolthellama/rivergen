@@ -50,7 +50,7 @@ int main()
 	signal(SIGUSR1,react_to_signals);
 	signal(SIGUSR2,react_to_signals);
 	signal(SIGSEGV,react_to_signals);
-	water_map w(250,250,6);
+	water_map w(350,350,6);
 	try{
 		w.graph();
 	}catch(int e){

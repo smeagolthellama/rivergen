@@ -11,7 +11,7 @@
 
 ///maximum size for map
 ///mekkora memoriat foglaljon le a program a terkep szamara?
-#define WATER_MAP_MAX_SIZE 300
+#define WATER_MAP_MAX_SIZE 350
 
 using std::array;
 
@@ -76,7 +76,11 @@ class water_map
 		}
 		void status();
 		///maga a terkep.
-		map_cell m_map[WATER_MAP_MAX_SIZE][WATER_MAP_MAX_SIZE]; //!< Member variable "m_hardness_map" describes map.
+#ifdef DYNAMIC_ALLOC
+		map_cell **m_map; //!< Member variable "m_hardness_map" describes map.
+#else
+		map_cell m_map[WATER_MAP_MAX_SIZE][WATER_MAP_MAX_SIZE];
+#endif
 
 		void graph(); //!< function to draw map on screen
 
