@@ -91,3 +91,17 @@ Ezek közül soknak nincsenek gyors eredményei.
 	* A víznek két folyási módja van, de a levegőt nem lehet kétdimenziósra egyszerűsíteni, amíg a vizet igen. Mivel a víz gyorsabban készít érdekes domborzatot, ezt választottam.
 
 ![A víz két folyási módja, színnel jelölve a természet által](images/turbulence.jpg)
+
+##A dolgozat
+
+### A dolgozat célja
+
+ * A dolgozat célja a víz (keveset) egyszerűsített folyását modellezze.
+ * Csak két egyszerűsítés van:
+	 1. A víz csak egy rétegben tud terjedni, mivel a memóriában egy kétdimenziós mátrix tárolja az összes jellemzőjét minden cellának.
+	 2. A víz kétfelé folyási módjából csak az egyik van letárgyalva: A lamináris folyás
+
+### A dolgozat által használt technológia
+
+ * A dolgozat fo resze c++ nyelven van megirva
+ * Grafikai modon jeleniti meg a szimulaciot, harom kepet rajzolva ki minden otven lepesnel. Ezek kozul a bal oldali a harmadik
